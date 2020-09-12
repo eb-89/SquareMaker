@@ -1,7 +1,7 @@
 {
-  "name": "SquareMaker",
+  "name": "Squares",
   "version": "1.0.0",
-  "description": "A SquareMaker",
+  "description": "A minesweeper implementation",
   "main": "main.js",
   "scripts": {
     "test": "test",

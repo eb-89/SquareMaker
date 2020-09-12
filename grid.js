@@ -1,21 +1,26 @@
 
-const Cell = function(x, y, width, height, color) {
+const Cell = function(x, y, width, height, color, content) {
   return {
     x,
     y,
     width,
     height,
     color,
-    _time: null
+    _time: null,
+    content: content,
+    hidden: true
   }
 }
 
-const cellCollection = function(x, y, width, height, color) {
+const cellCollection = function(x, y, width, height, color, model) {
 
+  let stateArray = model.getState();
   let innerGrid = [];
   for (let i = 0; i < x; i++) {
     for (let j = 0; j < y; j++) {
-      innerGrid[i*x+j] = Cell(i*width,j*height, width-1, height-1, color); 
+      innerGrid[i*x+j] = Cell(i*width,j*height, width, height, color, stateArray[x][y].content);
+      // Doesn't work 
+      innerGrid[i*x+j].hidden = stateArray[x][y].hidden;
     }
   }
   
@@ -25,13 +30,21 @@ const cellCollection = function(x, y, width, height, color) {
   }
 }
 
-const Grid = function(x,y, width, height,color) {
+const Grid = function(x,y, width, height,color, model) {
 
-  let grid = cellCollection(x,y, width, height, color)
+  let grid = cellCollection(x,y, width, height, color, model)
 
   return {
+    handleMouseClick: function(evt, callback) {
+      const cell = _getCell(evt, grid);
+      // cell.hidden = !cell.hidden;
+      if (cell) {
+        callback(cell.x/cell.width, cell.y/cell.height);
+      }
+    },
+
     handleMouseMove: function(evt) {
-      _handleMouseMove(grid, evt);
+      let cell = _getCell(evt, grid);
     },
 
     setDefaultColor: function(color) {
@@ -47,21 +60,32 @@ const Grid = function(x,y, width, height,color) {
         ctx.save();
         ctx.translate(el.x, el.y);
         ctx.fillStyle = el.color;
-        ctx.fillRect(0, 0, el.width, el.height);
+        ctx.fillRect(0, 0, el.width-1, el.height-1);
+
+        if (!el.hidden) {
+          const ts = 18;
+          ctx.font = `normal normal bold ${ts}px Courier`;
+          ctx.fillStyle = "white";
+          const textplaceX = (el.width - ctx.measureText(el.content).width)/2;
+          // const textplaceY = (el.height - ctx.measureText(el.content).height)/2;
+          const textplaceY = el.height - ts/2;
+
+          ctx.fillText(el.content, textplaceX, textplaceY) ;
+        }
         ctx.restore();
       })
     }
   }
 }
 
-function _handleMouseMove(grid, evt) {
-
+// Also highlights the cell.
+function _getCell(evt, grid) {
 
   const rect = evt.target.getBoundingClientRect();
   const mouseX = evt.clientX - rect.x;
   const mouseY = evt.clientY - rect.y;
-
-  grid.cellArray.forEach( cell => {
+  let out;
+  for (let cell of grid.cellArray) {
     if (
       cell.x < mouseX 
       && cell.y < mouseY 
@@ -69,10 +93,12 @@ function _handleMouseMove(grid, evt) {
       && (cell.y + cell.height > mouseY)
     ) {
       cell.color = "red";
+      out = cell;
     } else {
       cell.color = grid.defaultColor;
     }
-  });
+  }
+  return out;
 
 }
 
