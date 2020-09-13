@@ -1,46 +1,56 @@
 
-const Cell = function(x, y, width, height, color, content) {
+const Cell = function(data, width, height, color) {
+
+  let _data = data;
+  let content = _data.content;
+  let textColor = "white"
+
   return {
-    x,
-    y,
+    x: _data.x*width,
+    y: _data.y*height,
     width,
     height,
     color,
-    _time: null,
-    content: content,
-    hidden: true
+    get content() {return _data.content},
+    get hidden() {return _data.hidden},
+    get neighbors() {return _data.neighbors},
+    get label() {return _data.label},
+    textColor
   }
 }
+
 
 const cellCollection = function(x, y, width, height, color, model) {
 
   let stateArray = model.getState();
-  let innerGrid = [];
+  let cells = [];
   for (let i = 0; i < x; i++) {
     for (let j = 0; j < y; j++) {
-      innerGrid[i*x+j] = Cell(i*width,j*height, width, height, color, stateArray[x][y].content);
-      // Doesn't work 
-      innerGrid[i*x+j].hidden = stateArray[x][y].hidden;
+      cells[i*x+j] = Cell(stateArray[i][j], width, height, color);
     }
   }
-  
+
   return {
-      cellArray: innerGrid,
+      cellArray: cells,
       defaultColor: color
   }
 }
 
-const Grid = function(x,y, width, height,color, model) {
+const Grid = function(model) {
 
-  let grid = cellCollection(x,y, width, height, color, model)
+  let width = 30;
+  let height = 30;
+  let defaultColor = "blue"
+  let grid = cellCollection(model._x, model._y, width, height, defaultColor, model)
 
   return {
-    handleMouseClick: function(evt, callback) {
+    handleClick: function(evt, callback) {
       const cell = _getCell(evt, grid);
-      // cell.hidden = !cell.hidden;
+
+
       if (cell) {
         callback(cell.x/cell.width, cell.y/cell.height);
-      }
+      } 
     },
 
     handleMouseMove: function(evt) {
@@ -54,24 +64,51 @@ const Grid = function(x,y, width, height,color, model) {
       })
     },
 
+    // timestamp not in use
     render: function(ctx, timestamp) {
+
+      if (!model.isRunning()) {
+        const ts = 30;
+        ctx.font = `normal normal bold ${ts}px Courier`;
+        const endText = "You hit a mine"
+        ctx.fillStyle = "black";
+        ctx.fillText(endText, (ctx.canvas.clientWidth - ctx.measureText(endText).width)/2, ctx.canvas.height/2) ;
+
+
+        return;
+      }
+
       grid.cellArray.forEach( el => {
-        el._time = timestamp;
         ctx.save();
         ctx.translate(el.x, el.y);
-        ctx.fillStyle = el.color;
+        
+        if (!el.hidden) {
+          if (el.content === "M") {
+            ctx.fillStyle = "red";
+          } else {
+            ctx.fillStyle = "magenta";
+          }
+
+        } else {
+          ctx.fillStyle = el.color;
+        }
+
         ctx.fillRect(0, 0, el.width-1, el.height-1);
 
-        if (!el.hidden) {
-          const ts = 18;
-          ctx.font = `normal normal bold ${ts}px Courier`;
-          ctx.fillStyle = "white";
-          const textplaceX = (el.width - ctx.measureText(el.content).width)/2;
-          // const textplaceY = (el.height - ctx.measureText(el.content).height)/2;
-          const textplaceY = el.height - ts/2;
+        const ts = 18;
+        ctx.font = `normal normal bold ${ts}px Courier`;
+        ctx.fillStyle = el.textColor;
+        const textplaceX = (el.width - ctx.measureText(el.content).width)/2;
+        const textplaceY = (el.height + ts)/2;
 
-          ctx.fillText(el.content, textplaceX, textplaceY) ;
+        if (!el.hidden) {
+          if (el.content == "M" || el.neighbors > 0) {
+            ctx.fillText(el.content, textplaceX, textplaceY) ;
+          } 
+        } else {
+          ctx.fillText(el.label, textplaceX, textplaceY) ;
         }
+
         ctx.restore();
       })
     }
@@ -93,9 +130,11 @@ function _getCell(evt, grid) {
       && (cell.y + cell.height > mouseY)
     ) {
       cell.color = "red";
+      cell.textColor = "orange"
       out = cell;
     } else {
       cell.color = grid.defaultColor;
+      cell.textColor = "white"
     }
   }
   return out;

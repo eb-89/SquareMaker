@@ -8,6 +8,7 @@ window.onload = init
 let cvs;
 let ctx;
 let grid;
+let model;
 
 
 const jsonlog = function(log, obj) {
@@ -19,13 +20,16 @@ const jsonlog = function(log, obj) {
 
 function init() {
 
-  Model.init();
+  model = Model(15,15);
+  model.init();
+  model.start();
   
-  grid = Grid(15, 15, 30, 30, "purple", Model);
+  grid = Grid(model);
 
   cvs = document.getElementById("jscvs");
   cvs.addEventListener("mousemove", onMouseMove);
-  cvs.addEventListener("click", onMouseClick);
+  cvs.addEventListener("mouseup", onMouseClick);
+  cvs.addEventListener("contextmenu", (evt) => {evt.preventDefault(); } );
 
   // removes the double click select h1 problem.
   cvs.onselectstart = function () { return false; }
@@ -40,9 +44,19 @@ function onMouseMove(evt) {
 }
 
 function onMouseClick(evt) {
-  grid.handleMouseClick(evt, function (x, y) {
-    Model.expand(x, y);
-  })
+  
+  switch (evt.button) {
+    case 0: 
+      grid.handleClick(evt, function (x, y) {
+        model.handleAction(x, y);
+      })
+      break;
+    case 2:
+      grid.handleClick(evt, function (x, y) {
+        model.mark(x, y);
+      })
+      break;
+  }
 }
 
 
