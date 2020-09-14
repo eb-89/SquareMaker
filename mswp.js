@@ -1,12 +1,3 @@
-// testing
-
-const jsonlog = function(log, obj) {
-  let out = JSON.stringify(obj, function(key, val) {
-    return (typeof val === 'function') ? '' + val : val;
-  });
-  console.log(log, out)
-} 
-
 
 let state = [];
 let running =  false;
@@ -122,6 +113,9 @@ const go = function(x, y) {
       if (state[x][y].content === "M") {
           this.end();
         } else if (state[x][y].neighbors == 0) {
+          if (state[x][y].label === "!") {
+            state[x][y].label = "";
+          }
           _floodfill(x,y);
         } 
         
@@ -157,40 +151,20 @@ const go = function(x, y) {
       running = false;
     },
 
-    move: function move(i,j) {
-      if (!running) {
-        console.log("cannot make move, game is not running");
-        return;
-      }
-
-      if (state[i][j].mine) {
-        console.log("Moved on mine, game over");
-        running = false;
-      }
-
-      if (state[i][j].neighbors == 0) {
-        floodfill(state[i][j]);
-      }
-      if (state[i][j].hidden) {
-        state[i][j].hidden = false;
-      }
-    },
-    
-
     getState: function getState() {
       return state;
     },
 
-
+    // not really correct 
     printState: function printState() {
 
       for (let row of state) {
         let out = "";
         for (let cell of row) {
           if (cell.hidden) {
-            out = out + " H ";
-          } else if (cell.mine) {
-            out = out + " X ";
+            out = out + " O ";
+          } else if (cell.content === "M") {
+            out = out + " M ";
           } else {
             out = out + " " + cell.neighbors + " ";
           }
