@@ -13,23 +13,41 @@ function Cell(x,y, content, hidden) {
   }
 }
 
+function _addMines(noOfMines) {
 
-function initialize(i, j) {
+  let randomArray = Array(state.length*state[0].length).fill(0).fill(1, 0, noOfMines);
 
-  for (let ii = 0; ii<i; ii++ ) {
-      state[ii] = [];
-    for (let jj = 0; jj < j; jj++) {
+  for (let i = 0; i < randomArray.length; i++) {
+    let idx1 = Math.floor(Math.random()*randomArray.length);
+    let idx2 = Math.floor(Math.random()*randomArray.length);
 
-      let mine = false;
-      let num = Math.random();
+    let temp = randomArray[idx1]
+    randomArray[idx1] = randomArray[idx2]
+    randomArray[idx2] = temp;
+  }
 
-      if (num < 0.05) {
-        state[ii][jj] = Cell(ii, jj, "M", true);
-      } else {
-        state[ii][jj] = Cell(ii, jj, "", true);
-      }
+  for (let i = 0; i < randomArray.length; i++) {
+    if (randomArray[i] == 1) {
+      state[i % state.length][Math.floor(i/state.length)].content = "M";
     }
   }
+
+}
+
+
+function _initialize(i, j) {
+
+
+  for (let ii = 0; ii<i; ii++ ) {
+    state[ii] = [];
+    for (let jj = 0; jj < j; jj++) {
+      state[ii][jj] = Cell(ii, jj, "", true);
+    }
+  }
+
+
+  let noOfMines = 40 ;
+  _addMines(noOfMines);
 
   let directions = [
     [-1,-1],
@@ -139,8 +157,7 @@ const go = function(x, y) {
     },
 
     init: function init() {
-      initialize(this._x, this._y);
-        console.log(state);
+      _initialize(this._x, this._y);
     },
 
     start: function () {

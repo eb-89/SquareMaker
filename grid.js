@@ -58,7 +58,7 @@ const cellCollection = function(x, y, width, height, color, model) {
   let cells = [];
   for (let i = 0; i < x; i++) {
     for (let j = 0; j < y; j++) {
-      cells[i*y+j] = Cell(stateArray[i][j], width, height, color);
+      cells[j*x+i] = Cell(stateArray[i][j], width, height, color);
     }
   }
 
@@ -76,8 +76,6 @@ const Grid = function(model, gridWidth, gridHeight) {
   let height = width;
   let defaultColor = "blue"
   let grid = cellCollection(model._x, model._y, width, height, defaultColor, model)
-
-  console.log(grid.cellArray);
 
   for(let cell of grid.cellArray) {
 
@@ -128,6 +126,7 @@ const Grid = function(model, gridWidth, gridHeight) {
       const ts = 10;
       ctx.font = `normal normal bold ${ts}px Courier`;
 
+      // TODO: this needs optimization badly
       for (let el of grid.cellArray) {
 
         // TODO: swap out all these colors
