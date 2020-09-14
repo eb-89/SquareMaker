@@ -20,16 +20,16 @@ const jsonlog = function(log, obj) {
 
 function init() {
 
-  model = Model(15,15);
+  model = Model(20,20);
   model.init();
   model.start();
-  
-  grid = Grid(model);
 
   cvs = document.getElementById("jscvs");
   cvs.addEventListener("mousemove", onMouseMove);
   cvs.addEventListener("mouseup", onMouseClick);
   cvs.addEventListener("contextmenu", (evt) => {evt.preventDefault(); } );
+
+  grid = Grid(model, cvs.width, cvs.height);
 
   // removes the double click select h1 problem.
   cvs.onselectstart = function () { return false; }

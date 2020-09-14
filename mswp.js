@@ -23,7 +23,7 @@ function initialize(i, j) {
       let mine = false;
       let num = Math.random();
 
-      if (num < 0.15) {
+      if (num < 0.05) {
         state[ii][jj] = Cell(ii, jj, "M", true);
       } else {
         state[ii][jj] = Cell(ii, jj, "", true);
@@ -140,6 +140,7 @@ const go = function(x, y) {
 
     init: function init() {
       initialize(this._x, this._y);
+        console.log(state);
     },
 
     start: function () {
