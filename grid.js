@@ -1,116 +1,115 @@
 // TODO: break out this file
 
+import Animator from "./animator.js"
 
-const Cell = function(data, width, height, color) {
 
-  let defaultColor = "#0000FF";
-  let _data = data;
-  let content = _data.content;
-  let textColor = color;
+const Cell = function(data, width, height, animator) {
+  this.width = width;
+  this.height = height;
+  this._data = data;
+  this.xPos = this._data.x*this.width;
+  this.yPos = this._data.y*this.height;
+  this.color;
 
-  let animationLength = 1000;
-  let animationStartTime;
-  let _enterListener = true;
+  
+  this._animator = animator;
+  this._animation = undefined;
 
-  return {
-    x: _data.x*width,
-    y: _data.y*height,
-    width,
-    height,
-    color,
-    get content() {return _data.content},
-    get hidden() {return _data.hidden},
-    get neighbors() {return _data.neighbors},
-    get label() {return _data.label},
-    textColor,
 
-    setAnimationStart: function (timestamp) {
-        animationStartTime = timestamp;
-    },
+  this._enterListener = true;
 
-    onMouseEnter: function() {},
-
-    onMouseExit: function() {},
-
-    animate: function (timestamp) {
-      let runtime = timestamp - animationStartTime;
-      if (runtime < animationLength) {
-        let color = Math.sin(Math.PI*(runtime/animationLength))/1.5+0.1;
-        let r = Math.round(color*255).toString(16);
-        let g = Math.round(color*255).toString(16);
-        // let b = Math.round(color*255).toString(16);
-        let b = (255).toString(16);
-
-        if (this.hidden) {
-          this.color = `#${r}${g}${b}`;
-        }
-      } else {
-          this.color = defaultColor;
-      }
-    }
-  }
+  this.x = this._data.x;
+  this.y = this._data.y;
 }
 
+Cell.prototype.isHidden = function()  { return this._data.isHidden() };
+Cell.prototype.getNeighbors = function()  {return this._data.getNeighbors()};
+Cell.prototype.isLabeled = function() {return this._data.isLabeled()};
+Cell.prototype.isMine = function() {return this._data.isMine()};
+Cell.prototype.setColor = function(color) {return this.color = color};
+Cell.prototype.getColor = function(color) {return color};
 
-const cellCollection = function(x, y, width, height, color, model) {
+Cell.prototype.draw = function(ctx, timestamp) {
+   if (!this.isHidden()) {
+      this.setColor("darkgray")
+     
+   } else {
+     if (this.isMine()) {
+       this.setColor("red")
+     } else {
+       this.setColor("brown")
+     }
+   } 
 
-  let stateArray = model.getState();
-  let cells = [];
-  for (let i = 0; i < x; i++) {
-    for (let j = 0; j < y; j++) {
-      cells[j*x+i] = Cell(stateArray[i][j], width, height, color);
-    }
-  }
+   ctx.setTransform(1, 0, 0, 1, this.xPos, this.yPos);
+   
+   if (this._animation) {
+     let remaining = this._animation(timestamp); 
+   
+     if (remaining < 0) {
+       this._animation = undefined;
+     }
+   }
+   ctx.fillStyle = this.color;
+   ctx.fillRect(0, 0, this.width-1, this.height-1);
+};
 
-  return {
-      cellArray: cells,
-      defaultColor: color
-  }
-}
+Cell.prototype.onMouseEnter = function() {
+      this._animation = this._animator.pulse(this, 2000, 100);
+};
 
-const Grid = function(model, gridWidth, gridHeight) {
+Cell.prototype.onMouseExit = function() {
+      // this._animation = undefined;
+};
 
 
-  let _timestamp;
-  let width = Math.min(Math.round(gridWidth/model._x), Math.round(gridHeight/model._y));
+const Grid = function(ctx, model) {
+
+  let width = Math.min(Math.round(ctx.canvas.width/model.x), Math.round(ctx.canvas.height/model.y));
   let height = width;
-  let defaultColor = "blue"
-  let grid = cellCollection(model._x, model._y, width, height, defaultColor, model)
 
-  for(let cell of grid.cellArray) {
+  const animator = Animator(ctx);
 
-    // TODO: rewrite this
-     cell.onMouseEnter = () => {
-        cell.setAnimationStart(_timestamp);
-     }
-     cell.onMouseExit = () => {
-       
-     }
+  let _stateArray = model.getState();
+
+  let _cells = [];
+  for (let i = 0; i < model.x; i++) {
+    for (let j = 0; j < model.y; j++) {
+      _cells[j*model.x+i] = new Cell(_stateArray[i][j], width, height, animator);
+    }
   }
+
+
 
   return {
     handleClick: function(evt, callback) {
-      const cell = _getCell(evt, grid);
 
+      const rect = evt.target.getBoundingClientRect();
+      const mouseX = evt.clientX - rect.x;
+      const mouseY = evt.clientY - rect.y;
+
+      const cell = _getCell(mouseX, mouseY, _cells);
+
+      // TODO: change this
       if (cell) {
-        callback(cell.x/cell.width, cell.y/cell.height);
+        callback(cell.x, cell.y);
       } 
     },
 
     handleMouseMove: function(evt) {
-      _handleMouseMove(evt, grid);
-    },
 
-    setDefaultColor: function(color) {
-      grid.defaultColor = color;
-      grid.cellArray.forEach(el => {
-        el.color = color;
-      })
+      const rect = evt.target.getBoundingClientRect();
+      const mouseX = evt.clientX - rect.x;
+      const mouseY = evt.clientY - rect.y;
+
+      _handleMouseMove(mouseX, mouseY, _cells);
     },
 
     render: function(ctx, timestamp) {
+      ctx.setTransform(1, 0, 0, 1,0,0);
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-      _timestamp = timestamp;
+      animator.setTimestamp(timestamp);
 
       if (!model.isRunning()) {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -122,77 +121,34 @@ const Grid = function(model, gridWidth, gridHeight) {
         return;
       }
 
-
       const ts = 10;
       ctx.font = `normal normal bold ${ts}px Courier`;
 
-      // TODO: this needs optimization badly
-      for (let el of grid.cellArray) {
-
-        // TODO: swap out all these colors
-        ctx.setTransform(1, 0, 0, 1, el.x, el.y);
-        if (!el.hidden) {
-          if (el.content === "M") {
-            ctx.fillStyle = "red";
-          } else {
-            ctx.fillStyle = "darkgray";
-          }
-        } else {
-          ctx.fillStyle = el.color;
-        }
-
-
-        ctx.fillRect(0, 0, el.width-1, el.height-1);
-
-        el.animate(_timestamp);
-
-        const textplaceX = (el.width - ctx.measureText(el.content).width)/2;
-        const textplaceY = (el.height + ts)/2;
-
-        ctx.fillStyle = el.textColor;
-        
-        if (!el.hidden) {
-          if (el.content == "M" || el.neighbors > 0) {
-            ctx.fillText(el.content, textplaceX, textplaceY) ;
-          } 
-        } else {
-
-          ctx.fillText(el.label, textplaceX, textplaceY) ;
-        }
-
+      for (let c of _cells) {
+        c.draw(ctx, timestamp);
       }
     }
   }
 }
 
-function _handleMouseMove (evt, grid) {
-  for (let cell of grid.cellArray) {
-
-    const rect = evt.target.getBoundingClientRect();
-    const mouseX = evt.clientX - rect.x;
-    const mouseY = evt.clientY - rect.y;
+function _handleMouseMove (mouseX, mouseY, cells) {
+  for (let cell of cells) {
 
     if (
-      cell.x < mouseX 
-      && cell.y < mouseY 
-      && (cell.x + cell.width > mouseX)
-      && (cell.y + cell.height > mouseY)
-    ) {
-
+      cell.xPos < mouseX 
+      && cell.yPos < mouseY 
+      && (cell.xPos + cell.width > mouseX)
+      && (cell.yPos + cell.height > mouseY)
+    ) {    
       if (cell._enterListener) {
         cell.onMouseEnter();
         cell._enterListener = false;
       }
     } else {
       if (!cell._enterListener) {
-        // mouseExit
         cell.onMouseExit();
         cell._enterListener = true;
       }
-
-      // handle default case
-      cell.color = cell.color;
-      cell.textColor = "white"
 
     }
   }
@@ -200,20 +156,14 @@ function _handleMouseMove (evt, grid) {
 }
 
 
-function _getCell(evt, grid) {
+function _getCell(mouseX, mouseY, cells) {
 
-  const rect = evt.target.getBoundingClientRect();
-  const mouseX = evt.clientX - rect.x;
-  const mouseY = evt.clientY - rect.y;
-  let out;
-  for (let cell of grid.cellArray) {
-
-
+  for (let cell of cells) {
     if (
-      cell.x < mouseX 
-      && cell.y < mouseY 
-      && (cell.x + cell.width > mouseX)
-      && (cell.y + cell.height > mouseY)
+      cell.xPos < mouseX 
+      && cell.yPos < mouseY 
+      && (cell.xPos + cell.width > mouseX)
+      && (cell.yPos + cell.height > mouseY)
     ) {
     return cell;
     }
