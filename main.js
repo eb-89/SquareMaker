@@ -34,8 +34,15 @@ function init() {
   // removes the double click select h1 problem.
   cvs.onselectstart = function () { return false; }
 
+  let auxCvs = document.createElement("canvas");
+  auxCvs.setAttribute("width", 1000);
+  auxCvs.setAttribute("height", 1000);
+
+  console.log(auxCvs)
+  // let auxCxt = auxCvs.getContext('2d');
+
   ctx = cvs.getContext('2d');
-  grid = Grid(ctx, model);
+  grid = Grid(cvs, auxCvs, model);
 
   start(grid);
 }
@@ -64,7 +71,7 @@ function onMouseClick(evt) {
 function start(grid) {
   (function loop(timestamp) {
 
-    grid.render(ctx, timestamp);
+    grid.render(timestamp);
     window.requestAnimationFrame(loop)
   }
   )();

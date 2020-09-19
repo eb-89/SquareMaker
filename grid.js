@@ -10,6 +10,7 @@ const Cell = function(data, width, height, animator) {
   this.xPos = this._data.x*this.width;
   this.yPos = this._data.y*this.height;
   this.color;
+  this.image = undefined;
 
   
   this._animator = animator;
@@ -29,33 +30,41 @@ Cell.prototype.isMine = function() {return this._data.isMine()};
 Cell.prototype.setColor = function(color) {return this.color = color};
 Cell.prototype.getColor = function(color) {return color};
 
-Cell.prototype.draw = function(ctx, timestamp) {
-   if (!this.isHidden()) {
-      this.setColor("darkgray")
-     
-   } else {
-     if (this.isMine()) {
-       this.setColor("red")
-     } else {
-       this.setColor("brown")
-     }
-   } 
+Cell.prototype.draw = function(ctx, auxCvs,timestamp) {
 
-   ctx.setTransform(1, 0, 0, 1, this.xPos, this.yPos);
-   
-   if (this._animation) {
-     let remaining = this._animation(timestamp); 
-   
-     if (remaining < 0) {
-       this._animation = undefined;
-     }
-   }
-   ctx.fillStyle = this.color;
-   ctx.fillRect(0, 0, this.width-1, this.height-1);
+  let neighbors;
+  if (!this.isHidden()) {
+     this.setColor("darkgray")
+     neighbors = this.getNeighbors();
+    
+  } else {
+    if (this.isMine()) {
+      this.setColor("red")
+    } else {
+      this.setColor("brown")
+    }
+  } 
+
+  ctx.setTransform(1, 0, 0, 1, this.xPos, this.yPos);
+
+  
+  if (this._animation) {
+    let remaining = this._animation(timestamp); 
+  
+    if (remaining < 0) {
+      this._animation = undefined;
+    }
+  }
+  ctx.fillStyle = this.color;
+  ctx.fillRect(0, 0, this.width-1, this.height-1);
+
+  if (neighbors > 0) {
+   ctx.drawImage(auxCvs, neighbors*this.width, 0, this.width, this.height, 0,0,this.width, this.height);
+  }
 };
 
 Cell.prototype.onMouseEnter = function() {
-      this._animation = this._animator.pulse(this, 2000, 100);
+      this._animation = this._animator.blow(this, 2000, 100);
 };
 
 Cell.prototype.onMouseExit = function() {
@@ -63,10 +72,28 @@ Cell.prototype.onMouseExit = function() {
 };
 
 
-const Grid = function(ctx, model) {
+
+const Grid = function(cvs, auxCvs, model) {
+
+
+  let ctx = cvs.getContext("2d")
+  let auxCtx = auxCvs.getContext("2d");
 
   let width = Math.min(Math.round(ctx.canvas.width/model.x), Math.round(ctx.canvas.height/model.y));
   let height = width;
+
+  // prerender
+  const ts = 10;
+  auxCtx.font = `normal normal bold ${ts}px Courier`;
+  for (let i = 0; i<10; i++) {
+
+    const text = `${i}`;
+    auxCtx.fillStyle = "black";
+    auxCtx.setTransform(1, 0, 0, 1, width*i, 0);
+    auxCtx.fillText(text, (auxCtx.measureText(text).width)/2, ts/2) ;
+
+  }
+
 
   const animator = Animator(ctx);
 
@@ -78,6 +105,8 @@ const Grid = function(ctx, model) {
       _cells[j*model.x+i] = new Cell(_stateArray[i][j], width, height, animator);
     }
   }
+
+
 
 
 
@@ -105,7 +134,7 @@ const Grid = function(ctx, model) {
       _handleMouseMove(mouseX, mouseY, _cells);
     },
 
-    render: function(ctx, timestamp) {
+    render: function(timestamp) {
       ctx.setTransform(1, 0, 0, 1,0,0);
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
@@ -121,11 +150,8 @@ const Grid = function(ctx, model) {
         return;
       }
 
-      const ts = 10;
-      ctx.font = `normal normal bold ${ts}px Courier`;
-
       for (let c of _cells) {
-        c.draw(ctx, timestamp);
+        c.draw(ctx, auxCvs, timestamp);
       }
     }
   }
