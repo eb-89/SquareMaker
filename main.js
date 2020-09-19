@@ -1,13 +1,13 @@
 
-import Grid from "./grid.js"
+import View from "./js/view.js"
 
 // Right now called model
-import Model from "./mswp.js"
+import Model from "./js//mswp.js"
 
 window.onload = init
 let cvs;
 let ctx;
-let grid;
+let view;
 let model;
 
 
@@ -20,7 +20,7 @@ const jsonlog = function(log, obj) {
 
 function init() {
 
-  model = Model(30,16,10);
+  model = Model(16,16,30);
   model.init();
   model.start();
 
@@ -42,25 +42,25 @@ function init() {
   // let auxCxt = auxCvs.getContext('2d');
 
   ctx = cvs.getContext('2d');
-  grid = Grid(cvs, auxCvs, model);
+  view = View(cvs, auxCvs, model);
 
-  start(grid);
+  start(view);
 }
 
 function onMouseMove(evt) {
-  grid.handleMouseMove(evt)
+  view.handleMouseMove(evt)
 }
 
 function onMouseClick(evt) {
   
   switch (evt.button) {
     case 0: 
-      grid.handleClick(evt, function (x, y) {
+      view.handleClick(evt, function (x, y) {
         model.handleAction(x, y);
       })
       break;
     case 2:
-      grid.handleClick(evt, function (x, y) {
+      view.handleClick(evt, function (x, y) {
         model.mark(x, y);
       })
       break;
@@ -68,10 +68,10 @@ function onMouseClick(evt) {
 }
 
 
-function start(grid) {
+function start(view) {
   (function loop(timestamp) {
 
-    grid.render(timestamp);
+    view.render(timestamp);
     window.requestAnimationFrame(loop)
   }
   )();

@@ -2,6 +2,7 @@ const end = function() {
   
 
   return {
+    name: 'END',
     render: function(ctx, auxCvs, timestamp) {
       ctx.fillStyle = "red";
       ctx.fillRect(100,100,100,200)
@@ -22,6 +23,9 @@ const end = function() {
       ) {
         cb("restart")
       }
+    },
+    handleMouseMove: function (x,y) {
+      // no-op;
     }
   }
 }
