@@ -1,6 +1,14 @@
 // TODO: break out this file
 
+const screens = {
+  MENU: 1,
+  MSWP: 2,
+  END: 3
+}
+
 import Animator from "./animator.js"
+import Menuscreen from "./menuscreen.js"
+import Endscreen from "./endscreen.js"
 
 
 const Cell = function(data, width, height, animator) {
@@ -75,9 +83,12 @@ Cell.prototype.onMouseExit = function() {
 
 const Grid = function(cvs, auxCvs, model) {
 
-
   let ctx = cvs.getContext("2d")
   let auxCtx = auxCvs.getContext("2d");
+
+  let menuscreen = Menuscreen();
+  let endscreen = Endscreen();
+  let currentScreen = screens.MENU;
 
   let width = Math.min(Math.round(ctx.canvas.width/model.x), Math.round(ctx.canvas.height/model.y));
   let height = width;
@@ -111,18 +122,53 @@ const Grid = function(cvs, auxCvs, model) {
 
 
   return {
-    handleClick: function(evt, callback) {
+    handleClick: function(evt) {
 
       const rect = evt.target.getBoundingClientRect();
       const mouseX = evt.clientX - rect.x;
       const mouseY = evt.clientY - rect.y;
 
-      const cell = _getCell(mouseX, mouseY, _cells);
+      switch (currentScreen) {
+        case (screens.MENU): 
 
-      // TODO: change this
-      if (cell) {
-        callback(cell.x, cell.y);
-      } 
+          menuscreen.handleClick(mouseX, mouseY, function(btn) {
+            switch (btn) {
+              case "start":
+                currentScreen = screens.MSWP;
+                break;
+            }
+          });
+          break;
+        case (screens.MSWP): 
+          const cell = _getCell(mouseX, mouseY, _cells);
+
+          // TODO: change this
+          if (cell) {
+            model.handleAction(cell.x, cell.y);
+            if (!model.isRunning()) {
+              currentScreen = screens.END;
+            }
+          }
+          break;
+        case (screens.END): 
+          endscreen.handleClick(mouseX, mouseY, function(btn) {
+            switch (btn) {
+              case "restart":
+                model.init();
+                model.start();
+                _stateArray = model.getState();
+                for (let i = 0; i < model.x; i++) {
+                  for (let j = 0; j < model.y; j++) {
+                    _cells[j*model.x+i] = new Cell(_stateArray[i][j], width, height, animator);
+                  }
+                }
+                currentScreen = screens.MSWP;
+                break;
+            }
+          });
+          break;
+      }
+ 
     },
 
     handleMouseMove: function(evt) {
@@ -140,19 +186,19 @@ const Grid = function(cvs, auxCvs, model) {
 
       animator.setTimestamp(timestamp);
 
-      if (!model.isRunning()) {
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        const ts = 30;
-        ctx.font = `normal normal bold ${ts}px Courier`;
-        const endText = "You hit a mine"
-        ctx.fillStyle = "black";
-        ctx.fillText(endText, (ctx.canvas.clientWidth - ctx.measureText(endText).width)/2, ctx.canvas.height/2) ;
-        return;
-      }
-
-      for (let c of _cells) {
-        c.draw(ctx, auxCvs, timestamp);
-      }
+      switch (currentScreen) {
+        case screens.MENU: 
+          menuscreen.render(ctx, auxCvs, timestamp);
+          break;
+        
+        case screens.MSWP: 
+          for (let c of _cells) {
+            c.draw(ctx, auxCvs, timestamp);
+          }
+          break;
+        case screens.END: 
+          endscreen.render(ctx, auxCvs, timestamp);
+      } 
     }
   }
 }
