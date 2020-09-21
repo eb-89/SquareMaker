@@ -77,7 +77,19 @@ const View = function(cvs, auxCvs, model) {
       const mouseY = evt.clientY - rect.y;
       if (screen.name === "MSWP") {
         screen.handleClick(mouseX, mouseY, function(cell) {
-          model.handleAction(cell.x, cell.y)
+          switch (evt.button) {
+            case 0: 
+              model.handleAction(cell.x, cell.y);
+              if (!model.isRunning()) {
+                screen = endscreen;
+              }
+              break;
+            case 2:
+              model.mark(cell.x, cell.y);
+              console.log(cell.isHidden());
+              break;
+          }
+
           if (!model.isRunning()) {
             screen = endscreen;
           }

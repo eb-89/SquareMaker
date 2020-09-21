@@ -34,32 +34,24 @@ const Mswp = function(x, y, noOfMines) {
 
     handleAction: function(x,y) {
       
-    if (this.isRunning()) {
-      let cell = _state[x][y];
+      if (this.isRunning()) {
+        let cell = _state[x][y];
 
-      if (cell.isMine()) {
-          this.end();
-        } else if (_state[x][y].neighbors == 0) {
-          if (_state[x][y].isLabeled()) {
-            _state[x][y].label = "x";
-          }
-          console.time("a")
+        if (cell.isLabeled()) {
+          return;
+        }
+
+        if (cell.isMine()) {
+            this.end();
+        } else {
           _floodfill(_state, x,y);
-          console.timeEnd("a")
-
-        } 
-        
-        _state[x][y].show();
+        }
       }
     },
 
     mark: function(x,y) {
       if (_state[x][y].isHidden()) {
-        if (_state[x][y].label === "") {
-          _state[x][y].label = "!";
-        } else {
-          _state[x][y].label = "";
-        }
+          _state[x][y].labeled = !_state[x][y].labeled;
       }
     },
 

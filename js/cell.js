@@ -32,9 +32,11 @@ Cell.prototype.draw = function(ctx, auxCvs,timestamp) {
     
   } else {
     if (this.isMine()) {
-      this.setColor("red")
+      this.setColor("red");
+    } else if (this.isLabeled()) {
+      this.setColor("black");
     } else {
-      this.setColor("brown")
+      this.setColor("brown");
     }
   } 
 
