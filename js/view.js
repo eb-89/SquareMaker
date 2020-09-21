@@ -18,20 +18,53 @@ const View = function(cvs, auxCvs, model) {
 
   Animator.setContext(ctx);
 
-  // prerender
-  const ts = 15;
-  auxCtx.font = `normal normal bold ${ts}px Courier`;
-  for (let i = 0; i<10; i++) {
-
-    const text = `${i}`;
-    auxCtx.fillStyle = "black";
-    auxCtx.setTransform(1, 0, 0, 1, Math.round(cvs.width/model.x)*i, 0);
-    auxCtx.fillText(text, (auxCtx.measureText(text).width)/2, ts/2) ;
-
+  let mswp_params = {
+    cellW: 20,
+    cellH: 20,
   }
 
+  // prerender
+
+  let ts = 30;
+  let text;
+  auxCtx.font = `normal normal bold ${ts}px Courier`;
+  for (let i = 0; i<10; i++) {
+    text = `${i}`;
+    auxCtx.fillStyle = "black";
+    auxCtx.setTransform(1, 0, 0, 1, 50*i, 0);
+    auxCtx.fillText(text, (50 - auxCtx.measureText(text).width)/2, 50/2 + ts/2 - 4);
+  }
+
+  ts = 15;
+  auxCtx.font = `normal normal bold ${ts}px Courier`;
+  auxCtx.setTransform(1, 0, 0, 1, 0, 50);
+  text = `Start`;
+  auxCtx.fillText(text, (100 - auxCtx.measureText(text).width)/2, ts);
+
+  ts = 15;
+  auxCtx.font = `normal normal bold ${ts}px Courier`;
+  auxCtx.setTransform(1, 0, 0, 1, 0, 100);
+  text = `restart`;
+  auxCtx.fillText(text, (100 - auxCtx.measureText(text).width)/2, ts);
+
+  ts = 15;
+  auxCtx.font = `normal normal bold ${ts}px Courier`;
+  auxCtx.setTransform(1, 0, 0, 1, 0, 150);
+  text = `home`;
+  auxCtx.fillText(text, (100 - auxCtx.measureText(text).width)/2, ts);
+
+  ts = 30;
+  auxCtx.font = `normal normal bold ${ts}px Courier`;
+  auxCtx.fontColor = `blue`;
+  auxCtx.setTransform(1, 0, 0, 1, 0, 200);
+  // ctx.fillStyle = "blue";
+  text = `Squares`;
+  auxCtx.fillText(text, (150 - auxCtx.measureText(text).width)/2, ts);
+
+  // end of prerender
+
   let menuscreen = Menuscreen();
-  let mswpscreen = Mswpscreen(model, ctx.canvas.width, ctx.canvas.height);
+  let mswpscreen = Mswpscreen(model, mswp_params);
   let endscreen = Endscreen();
   // let currentScreen = screens.MSWP;
   let screen = menuscreen;
@@ -53,6 +86,8 @@ const View = function(cvs, auxCvs, model) {
         screen.handleClick(mouseX, mouseY, function(answer) {
           switch(answer) {
             case 'start':
+              model.start();
+              model.init();
               mswpscreen.getModelData();
               screen = mswpscreen;
             break;
@@ -61,6 +96,10 @@ const View = function(cvs, auxCvs, model) {
               model.init();
               mswpscreen.getModelData();
               screen = mswpscreen;
+            break;
+            case 'home':
+              model.end();
+              screen = menuscreen;
             break;
           }
         });

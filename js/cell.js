@@ -1,4 +1,4 @@
-const Cell = function(data, width, height) {
+const Cell = function(data, width, height, textSize) {
   this.width = width;
   this.height = height;
   this._data = data;
@@ -48,7 +48,8 @@ Cell.prototype.draw = function(ctx, auxCvs,timestamp) {
   ctx.fillRect(0, 0, this.width-1, this.height-1);
 
   if (neighbors > 0) {
-   ctx.drawImage(auxCvs, neighbors*this.width, 0, this.width, this.height, 0,0, this.width, this.height);
+    // Each prerendered box is 50 wide and 50 high
+   ctx.drawImage(auxCvs, neighbors*50, 0, 50, 50, 0, 0, this.width, this.height);
   }
 };
 

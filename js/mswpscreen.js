@@ -1,11 +1,11 @@
 import Cell from "./Cell.js"
 import Animator from "./animator.js"
 
-const Mswpscreen = function(model, viewWidth, viewHeight) {
+const Mswpscreen = function(model, params) {
   
   let _stateArray = model.getState();
 
-  let width = Math.min(Math.round(viewWidth/model.x),Math.round(viewWidth/model.y) );
+  let width = Math.min(params.cellW, params.cellH);
   let height = width;
 
   let _cells = [];
@@ -64,10 +64,5 @@ const Mswpscreen = function(model, viewWidth, viewHeight) {
   }
 }
 
-
-function _getCell(mouseX, mouseY, cells) {
-
-
-}
 
 export default Mswpscreen
