@@ -5,18 +5,18 @@ import Animator from "./animator.js"
 import Menuscreen from "./menuscreen.js"
 import Mswpscreen from "./mswpscreen.js"
 import Endscreen from "./endscreen.js"
-import Timer from "./timer.js"
+// import Timer from "./timer.js"
 
 
 const View = function(cvs, auxCvs, model) {
 
-  let timer = new Timer();
-  Animator.setTimer(timer);
+
 
   let ctx = cvs.getContext("2d")
   let auxCtx = auxCvs.getContext("2d");
 
   Animator.setContext(ctx);
+
 
   let mswp_params = {
     cellW: 20,
@@ -128,13 +128,13 @@ const View = function(cvs, auxCvs, model) {
       screen.handleMouseMove(mouseX, mouseY);
     },
 
-    render: function(timestamp) {
+    render: function() {
       ctx.setTransform(1, 0, 0, 1,0,0);
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-      timer.update(timestamp);
+      //timer.update(timestamp);
 
-      screen.render(ctx, auxCvs, timestamp);
+      screen.render(ctx, auxCvs);
     }
   }
 }

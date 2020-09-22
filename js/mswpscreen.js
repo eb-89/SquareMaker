@@ -15,9 +15,12 @@ const Mswpscreen = function(model, params) {
 
   return {
     name: 'MSWP',
-    render: function(ctx, auxCvs, timestamp) {
+    render: function(ctx, auxCvs) {
       for (let c of _cells) {
-        c.draw(ctx, auxCvs, timestamp);
+          c.draw(ctx, auxCvs);
+      }
+      if (hoveredCell) {
+        hoveredCell.draw(ctx, auxCvs);
       }
     },
     getModelData() {
@@ -26,7 +29,8 @@ const Mswpscreen = function(model, params) {
       for (let i = 0; i < model.x; i++) {
         for (let j = 0; j < model.y; j++) {
           _cells[j*model.x+i] = new Cell(_stateArray[i][j], width, height);
-          _cells[j*model.x+i]._animation = Animator.pulse(500);
+          _cells[j*model.x+i]._animation = Animator.pulse(120);
+          // console.log(_cells[j*model.x+i]._animation);
         }
       }
     },

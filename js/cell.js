@@ -23,7 +23,7 @@ Cell.prototype.isMine = function() {return this._data.isMine()};
 Cell.prototype.setColor = function(color) {return this.color = color};
 Cell.prototype.getColor = function(color) {return color};
 
-Cell.prototype.draw = function(ctx, auxCvs,timestamp) {
+Cell.prototype.draw = function(ctx, auxCvs) {
 
   let neighbors;
   if (!this.isHidden()) {
@@ -42,8 +42,8 @@ Cell.prototype.draw = function(ctx, auxCvs,timestamp) {
 
   ctx.setTransform(1, 0, 0, 1, this.x, this.y);
 
-  if (this._animation.isRunning) {
-    let remaining = this._animation.play(this, timestamp); 
+  if (this._animation) {
+    let remaining = this._animation.play(this); 
   }
 
   ctx.fillStyle = this.color;
@@ -57,12 +57,14 @@ Cell.prototype.draw = function(ctx, auxCvs,timestamp) {
 
 
 Cell.prototype.onMouseEnter = function() {
-      this._animation.start(1000);
+  if (!this._animation.isRunning) {
+      this._animation.start();
+  }
 
 };
 
 Cell.prototype.onMouseExit = function() {
-
+      this._animation.stop();
 };
 
 

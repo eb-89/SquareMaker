@@ -14,7 +14,7 @@ const end = function() {
   }
   return {
     name: 'END',
-    render: function(ctx, auxCvs, timestamp) {
+    render: function(ctx, auxCvs) {
 
       // Now here we have a bunch of magic numbers...
       // TODO: Change this!

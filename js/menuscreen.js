@@ -9,7 +9,7 @@ const menu = function() {
   
   return {
     name: 'MENU',
-    render: function(ctx, auxCvs, timestamp) {
+    render: function(ctx, auxCvs) {
       ctx.fillStyle = "yellow";
       ctx.setTransform(1,0,0,1, startBtn.x, startBtn.y)
       ctx.fillRect(0,0,startBtn.w,startBtn.h);
