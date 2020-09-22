@@ -1,11 +1,13 @@
-const Cell = function(data, width, height, textSize) {
+import Marker from "./Marker.js"
+
+const Cell = function(data, width, height) {
   this.width = width;
   this.height = height;
   this._data = data;
   this.x = this._data.x*this.width;
   this.y = this._data.y*this.height;
   this.color;
-  this.image = undefined;
+  this.marker = new Marker(this.width, this.height);
 
   this._animation = undefined;
 
@@ -25,6 +27,8 @@ Cell.prototype.getColor = function(color) {return color};
 
 Cell.prototype.draw = function(ctx, auxCvs) {
 
+  ctx.setTransform(1, 0, 0, 1, this.x, this.y);
+
   let neighbors;
   if (!this.isHidden()) {
      this.setColor("darkgray")
@@ -34,13 +38,13 @@ Cell.prototype.draw = function(ctx, auxCvs) {
     if (this.isMine()) {
       this.setColor("red");
     } else if (this.isLabeled()) {
-      this.setColor("black");
+      this.marker.draw(ctx, auxCvs);
     } else {
       this.setColor("brown");
     }
   } 
 
-  ctx.setTransform(1, 0, 0, 1, this.x, this.y);
+
 
   if (this._animation) {
     let remaining = this._animation.play(this); 
