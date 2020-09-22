@@ -79,13 +79,13 @@ const View = function(cvs, auxCvs, model) {
         screen.handleClick(mouseX, mouseY, function(cell) {
           switch (evt.button) {
             case 0: 
-              model.handleAction(cell.x, cell.y);
+              model.handleAction(cell.datax, cell.datay);
               if (!model.isRunning()) {
                 screen = endscreen;
               }
               break;
             case 2:
-              model.mark(cell.x, cell.y);
+              model.mark(cell.datax, cell.datay);
               console.log(cell.isHidden());
               break;
           }

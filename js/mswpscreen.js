@@ -42,10 +42,10 @@ const Mswpscreen = function(model, params) {
       
       for (let cell of _cells) {
         if (
-          cell.xPos < mouseX 
-          && cell.yPos < mouseY 
-          && (cell.xPos + cell.width > mouseX)
-          && (cell.yPos + cell.height > mouseY)
+          cell.x < mouseX 
+          && cell.y < mouseY 
+          && (cell.x + cell.width > mouseX)
+          && (cell.y + cell.height > mouseY)
         ) {
           hoveredCell = cell;
           if (cell._enterListener) {

@@ -2,8 +2,8 @@ const Cell = function(data, width, height, textSize) {
   this.width = width;
   this.height = height;
   this._data = data;
-  this.xPos = this._data.x*this.width;
-  this.yPos = this._data.y*this.height;
+  this.x = this._data.x*this.width;
+  this.y = this._data.y*this.height;
   this.color;
   this.image = undefined;
 
@@ -12,8 +12,8 @@ const Cell = function(data, width, height, textSize) {
 
   this._enterListener = true;
 
-  this.x = this._data.x;
-  this.y = this._data.y;
+  this.datax = this._data.x;
+  this.datay = this._data.y;
 }
 
 Cell.prototype.isHidden = function()  { return this._data.isHidden() };
@@ -40,7 +40,7 @@ Cell.prototype.draw = function(ctx, auxCvs,timestamp) {
     }
   } 
 
-  ctx.setTransform(1, 0, 0, 1, this.xPos, this.yPos);
+  ctx.setTransform(1, 0, 0, 1, this.x, this.y);
 
   if (this._animation.isRunning) {
     let remaining = this._animation.play(this, timestamp); 

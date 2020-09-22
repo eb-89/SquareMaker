@@ -18,11 +18,11 @@ Pulse.prototype.play = function(obj, time) {
   // If endtime is before startTime, run forever
   if (this.endTime < this.startTime) {
       let runtime = this.startTime + time;
-      this.ctx.setTransform(1/2*Math.sin(runtime/200), 0, 0, 1/2*Math.sin(runtime/200), obj.xPos + obj.width/2 ,  obj.yPos+obj.height/2);
+      this.ctx.setTransform(1/2*Math.sin(runtime/200), 0, 0, 1/2*Math.sin(runtime/200), obj.x + obj.width/2 ,  obj.y+obj.height/2);
   }
   else if (time < this.endTime) {
       let runtime =  this.endTime - time;
-      this.ctx.setTransform(1/2*Math.sin(runtime/200), 0, 0, 1/2*Math.sin(runtime/200), obj.xPos + obj.width/2 ,  obj.yPos+obj.height/2);
+      this.ctx.setTransform(1/2*Math.sin(runtime/200), 0, 0, 1/2*Math.sin(runtime/200), obj.x + obj.width/2 ,  obj.y+obj.height/2);
   } else {
     this.isRunning = false;
   }
