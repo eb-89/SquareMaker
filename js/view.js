@@ -86,7 +86,7 @@ const View = function(cvs, auxCvs, model) {
               break;
             case 2:
               model.mark(cell.datax, cell.datay);
-              console.log(cell.isHidden());
+              cell.marker.animation.start();
               break;
           }
 

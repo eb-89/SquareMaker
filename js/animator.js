@@ -3,7 +3,7 @@ const Animation = function () {
   this.t = 0;
   this.isRunning = false;
   this.start = function () {
-      this.t = 0;
+      // this.t = 0;
       this.isRunning = true;
   },
   this.stop = function () {
@@ -11,28 +11,57 @@ const Animation = function () {
   },
   this.update = function (timestep) {
     this.t += timestep;
+  },
+  this.reset = function() {
+    this.t = 0;
   }
 }
 
 const Pulse = function(ctx, duration) { 
   Animation.call(this);
-  this.end = this.t + duration;
+  if (duration) {  
+    this.end = this.t + duration;
+  }
   this.ctx = ctx;
 }
 
 Pulse.prototype.play = function(obj) {
-    if (this.t < this.end && this.isRunning) {
 
-      this.ctx.transform(1,0,0,1, + obj.width/2, +obj.height/2);
-      this.ctx.transform(0.2*Math.sin(this.t/5) + 1, 0, 0, 0.2*Math.sin(this.t/5) + 1, 0 ,  0);
-      this.ctx.transform(1,0,0,1, -obj.width/2, -obj.height/2);
-
-      this.update(1);
-    } else {
+    this.ctx.transform(1,0,0,1, obj.width/2, obj.height/2);
+    this.ctx.transform(0.2*Math.sin(this.t/5) + 1, 0, 0, 0.2*Math.sin(this.t/5) + 1, 0 ,  0);
+    this.ctx.transform(1,0,0,1, -obj.width/2, -obj.height/2);
+    // console.log("updating", obj);
+    
+    if (this.end && this.end < this.t) {
       this.isRunning = false;
+      this.reset();
+    } else {
+      this.update(1);
     }
 }
 
+
+const Spin = function(ctx, duration) { 
+  Animation.call(this);
+  if (duration) {  
+    this.end = this.t + duration;
+  }
+  this.ctx = ctx;
+}
+
+Spin.prototype.play = function(obj) {
+    this.ctx.transform(1,0,0,1, obj.width/2, obj.height/2);
+    this.ctx.transform(Math.sin(this.t/5), 0, 0, 1, 0 ,  0);
+    this.ctx.transform(1,0,0,1, -obj.width/2, -obj.height/2);
+    // console.log("updating", obj);
+    
+    if (this.end && this.end < this.t) {
+      this.isRunning = false;
+      this.reset();
+    } else {
+      this.update(1);
+    }
+}
 
 
 //const Blow = function(ctx, timer) {
@@ -80,8 +109,8 @@ const AnimationFactory = function() {
       },
 
 
-      blow() {
-        return new Blow(_ctx, _timer); 
+      spin(duration) {
+        return new Spin(_ctx, duration); 
       },
 
 

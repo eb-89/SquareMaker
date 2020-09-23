@@ -1,4 +1,5 @@
 import Marker from "./Marker.js"
+import Animator from "./animator.js"
 
 const Cell = function(data, width, height) {
   this.width = width;
@@ -8,6 +9,7 @@ const Cell = function(data, width, height) {
   this.y = this._data.y*this.height;
   this.color;
   this.marker = new Marker(this.width, this.height);
+  this.marker.animation = Animator.spin();
 
   this._animation = undefined;
 
@@ -29,6 +31,14 @@ Cell.prototype.draw = function(ctx, auxCvs) {
 
   ctx.setTransform(1, 0, 0, 1, this.x, this.y);
 
+  if (this._animation.isRunning) {
+    // console.log("playing");
+    let remaining = this._animation.play(this); 
+  }
+
+  ctx.fillStyle = this.color;
+  ctx.fillRect(0, 0, this.width-1, this.height-1);
+
   let neighbors;
   if (!this.isHidden()) {
      this.setColor("darkgray")
@@ -38,7 +48,11 @@ Cell.prototype.draw = function(ctx, auxCvs) {
     if (this.isMine()) {
       this.setColor("red");
     } else if (this.isLabeled()) {
+      if (this.marker.animation.isRunning) {
+        this.marker.animation.play(this.marker);
+      }
       this.marker.draw(ctx, auxCvs);
+
     } else {
       this.setColor("brown");
     }
@@ -46,12 +60,8 @@ Cell.prototype.draw = function(ctx, auxCvs) {
 
 
 
-  if (this._animation) {
-    let remaining = this._animation.play(this); 
-  }
 
-  ctx.fillStyle = this.color;
-  ctx.fillRect(0, 0, this.width-1, this.height-1);
+
 
   if (neighbors > 0) {
     // Each prerendered box is 50 wide and 50 high
@@ -64,11 +74,11 @@ Cell.prototype.onMouseEnter = function() {
   if (!this._animation.isRunning) {
       this._animation.start();
   }
-
 };
 
 Cell.prototype.onMouseExit = function() {
-      this._animation.stop();
+      // this._animation.stop();
+      // this._animation.reset();
 };
 
 
