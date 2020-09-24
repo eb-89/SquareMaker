@@ -15,24 +15,25 @@ const Animation = function () {
   this.reset = function() {
     this.t = 0;
   }
+  this.duration = 0;
 }
 
-const Pulse = function(ctx, duration) { 
+const PulseT = function(ctx, duration) { 
   Animation.call(this);
   if (duration) {  
-    this.end = this.t + duration;
+    this.duration = duration;
+    this.end = this.t + this.duration;
   }
   this.ctx = ctx;
 }
 
-Pulse.prototype.play = function(obj) {
+PulseT.prototype.play = function(obj) {
 
-    this.ctx.transform(1,0,0,1, obj.width/2, obj.height/2);
-    this.ctx.transform(0.2*Math.sin(this.t/5) + 1, 0, 0, 0.2*Math.sin(this.t/5) + 1, 0 ,  0);
-    this.ctx.transform(1,0,0,1, -obj.width/2, -obj.height/2);
-    // console.log("updating", obj);
-    
-    if (this.end && this.end < this.t) {
+    this.ctx.setTransform(1,0,0,1, obj.x + obj.width/2, obj.y+ obj.height/2);
+    this.ctx.transform(0.2*Math.sin(Math.PI + this.t/5) + 1, 0, 0, 0.2*Math.sin(Math.PI + this.t/5) + 1, 0 ,  0);
+    this.ctx.transform(1,0,0,1, -(obj.x + obj.width/2), -(obj.y+ obj.height/2));
+
+    if (this.end && this.end <= this.t) {
       this.isRunning = false;
       this.reset();
     } else {
@@ -41,7 +42,7 @@ Pulse.prototype.play = function(obj) {
 }
 
 
-const Spin = function(ctx, duration) { 
+const SpinT = function(ctx, duration) { 
   Animation.call(this);
   if (duration) {  
     this.end = this.t + duration;
@@ -49,11 +50,11 @@ const Spin = function(ctx, duration) {
   this.ctx = ctx;
 }
 
-Spin.prototype.play = function(obj) {
-    this.ctx.transform(1,0,0,1, obj.width/2, obj.height/2);
+SpinT.prototype.play = function(obj) {
+    // This does not reset the transform!!
+    this.ctx.transform(1,0,0,1, obj.x + obj.width/2, obj.y + obj.height/2);
     this.ctx.transform(Math.sin(this.t/5), 0, 0, 1, 0 ,  0);
-    this.ctx.transform(1,0,0,1, -obj.width/2, -obj.height/2);
-    // console.log("updating", obj);
+    this.ctx.transform(1,0,0,1, -(obj.x + obj.width/2), -(obj.y + obj.height/2));
     
     if (this.end && this.end < this.t) {
       this.isRunning = false;
@@ -104,13 +105,13 @@ const AnimationFactory = function() {
         _ctx = ctx;
       },
 
-      pulse(duration) {
-        return new Pulse(_ctx, duration); 
+      pulseT(duration) {
+        return new PulseT(_ctx, duration); 
       },
 
 
-      spin(duration) {
-        return new Spin(_ctx, duration); 
+      spinT(duration) {
+        return new SpinT(_ctx, duration); 
       },
 
 

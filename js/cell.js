@@ -5,15 +5,13 @@ const Cell = function(data, width, height) {
   this.width = width;
   this.height = height;
   this._data = data;
-  this.x = this._data.x*this.width;
-  this.y = this._data.y*this.height;
+  this.x = this._data.x*(this.width + 1);
+  this.y = this._data.y*(this.height + 1);
   this.color;
-  this.marker = new Marker(this.width, this.height);
-  this.marker.animation = Animator.spin();
+  this.marker = new Marker(this.x, this.y, this.width, this.height);
+  this.marker.animation = Animator.spinT();
 
-  this._animation = undefined;
-
-
+  this.animation = undefined;
   this._enterListener = true;
 
   this.datax = this._data.x;
@@ -29,15 +27,15 @@ Cell.prototype.getColor = function(color) {return color};
 
 Cell.prototype.draw = function(ctx, auxCvs) {
 
-  ctx.setTransform(1, 0, 0, 1, this.x, this.y);
+  //ctx.setTransform(1, 0, 0, 1, this.x, this.y);
 
-  if (this._animation.isRunning) {
+  if (this.animation.isRunning) {
     // console.log("playing");
-    let remaining = this._animation.play(this); 
+    let remaining = this.animation.play(this); 
   }
 
   ctx.fillStyle = this.color;
-  ctx.fillRect(0, 0, this.width-1, this.height-1);
+  ctx.fillRect(this.x, this.y, this.width, this.height);
 
   let neighbors;
   if (!this.isHidden()) {
@@ -58,27 +56,23 @@ Cell.prototype.draw = function(ctx, auxCvs) {
     }
   } 
 
-
-
-
-
-
   if (neighbors > 0) {
     // Each prerendered box is 50 wide and 50 high
-   ctx.drawImage(auxCvs, neighbors*50, 0, 50, 50, 0, 0, this.width, this.height);
+   ctx.drawImage(auxCvs, neighbors*50, 0, 50, 50, this.x, this.y, this.width, this.height);
   }
+  ctx.setTransform(1,0,0,1,0,0)
 };
 
 
 Cell.prototype.onMouseEnter = function() {
-  if (!this._animation.isRunning) {
-      this._animation.start();
-  }
+  // if (!this.animation.isRunning) {
+      this.animation.start();
+  // }
 };
 
 Cell.prototype.onMouseExit = function() {
-      // this._animation.stop();
-      // this._animation.reset();
+      this.animation.stop();
+      this.animation.reset();
 };
 
 

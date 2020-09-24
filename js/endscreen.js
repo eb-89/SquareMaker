@@ -3,14 +3,14 @@ const end = function() {
   const endBtn= {
     x: 100,
     y: 100,
-    w: 200,
-    h: 100
+    width: 200,
+    height: 100
   }
   const homeBtn= {
     x: 100,
     y: 200,
-    w: 200,
-    h: 100
+    width: 200,
+    height: 100
   }
   return {
     name: 'END',
@@ -18,31 +18,31 @@ const end = function() {
 
       // Now here we have a bunch of magic numbers...
       // TODO: Change this!
-      ctx.fillStyle = "red";
-      ctx.setTransform(1,0,0,1, endBtn.x, endBtn.y)
-      ctx.fillRect(0,0,endBtn.w,endBtn.h);
-      ctx.drawImage(auxCvs, 0, 100, 100, 50, (endBtn.w - 100)/2, 0, 100, 50);
+      // ctx.setTransform(1,0,0,1, endBtn.x, endBtn.y)
+      ctx.fillStyle="blue";
+      ctx.fillRect(endBtn.x, endBtn.y,endBtn.width,endBtn.height);
+      ctx.drawImage(auxCvs, 0, 100, 100, 50, endBtn.x + (endBtn.width - 100)/2, endBtn.y, 100, 50);
 
-      ctx.fillStyle = "orange";
-      ctx.setTransform(1,0,0,1, homeBtn.x, homeBtn.y)
-      ctx.fillRect(0,0,homeBtn.w,homeBtn.h);
-      ctx.drawImage(auxCvs, 0, 150, 100, 50, (homeBtn.w - 100)/2, 0, 100, 50);
+      ctx.fillStyle="magenta";
+      // ctx.setTransform(1,0,0,1, homeBtn.x, homeBtn.y)
+      ctx.fillRect(homeBtn.x, homeBtn.y,homeBtn.width,homeBtn.height);
+      ctx.drawImage(auxCvs, 0, 150, 100, 50, homeBtn.x + (homeBtn.width - 100)/2, homeBtn.y, 100, 50);
       
     },
     handleClick: function(x,y, cb ) {
       if (
         x > endBtn.x 
         && y > endBtn.y 
-        && (endBtn.x + endBtn.w > x)
-        && (endBtn.y + endBtn.h > y)
+        && (endBtn.x + endBtn.width > x)
+        && (endBtn.y + endBtn.height > y)
       ) {
         cb("restart")
       }
       else if (
         x > homeBtn.x 
         && y > homeBtn.y 
-        && (homeBtn.x + homeBtn.w > x)
-        && (homeBtn.y + homeBtn.h > y)
+        && (homeBtn.x + homeBtn.width > x)
+        && (homeBtn.y + homeBtn.height > y)
       ) {
         cb("home")
       }

@@ -15,6 +15,7 @@ const Mswpscreen = function(model, params) {
 
   return {
     name: 'MSWP',
+
     render: function(ctx, auxCvs) {
       for (let c of _cells) {
         // This is a referential comparison
@@ -33,10 +34,10 @@ const Mswpscreen = function(model, params) {
       for (let i = 0; i < model.x; i++) {
         for (let j = 0; j < model.y; j++) {
           _cells[j*model.x+i] = new Cell(_stateArray[i][j], width, height);
-          _cells[j*model.x+i]._animation = Animator.pulse(30);
-          // console.log(_cells[j*model.x+i]._animation);
+          _cells[j*model.x+i].animation = Animator.pulseT();
         }
       }
+      hoveredCell = undefined;
     },
     handleClick(mouseX, mouseY, cb) {
       // let cell = _getCell(mouseX, mouseY, _cells)
