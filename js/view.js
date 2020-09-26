@@ -5,6 +5,7 @@ import Animator from "./animator.js"
 import Menuscreen from "./menuscreen.js"
 import Mswpscreen from "./mswpscreen.js"
 import Endscreen from "./endscreen.js"
+import Transition from "./transition.js"
 // import Timer from "./timer.js"
 
 
@@ -15,7 +16,7 @@ const View = function(cvs, auxCvs, model) {
   let ctx = cvs.getContext("2d")
   let auxCtx = auxCvs.getContext("2d");
 
-  Animator.setContext(ctx);
+  // Animator.setContext(ctx);
 
 
   let mswp_params = {
@@ -64,10 +65,12 @@ const View = function(cvs, auxCvs, model) {
   // end of prerender
 
   let menuscreen = Menuscreen();
-  let mswpscreen = Mswpscreen(model, mswp_params);
+  let mswpscreen = Mswpscreen(ctx, auxCvs, model, mswp_params);
   let endscreen = Endscreen();
   // let currentScreen = screens.MSWP;
   let screen = menuscreen;
+
+  let transition = Transition(ctx);
 
   return {
     handleClick: function(evt) {
@@ -86,7 +89,6 @@ const View = function(cvs, auxCvs, model) {
               break;
             case 2:
               model.mark(cell.datax, cell.datay);
-              cell.marker.animation.start();
               break;
           }
 
@@ -101,7 +103,11 @@ const View = function(cvs, auxCvs, model) {
               model.start();
               model.init();
               mswpscreen.getModelData();
-              screen = mswpscreen;
+
+              // transition.startTransition(function () {
+                screen = mswpscreen;
+              // })
+
             break;
             case 'restart':
               model.start();
@@ -131,15 +137,15 @@ const View = function(cvs, auxCvs, model) {
     render: function() {
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-      //timer.update(timestamp);
-
       screen.render(ctx, auxCvs);
+
+      if (transition.isRunning) {
+        transition.render(ctx);
+      }
+
     }
   }
 }
-
-
-
 
 
 export default View;

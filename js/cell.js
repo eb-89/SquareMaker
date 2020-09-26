@@ -1,7 +1,8 @@
 import Marker from "./Marker.js"
 import Animator from "./animator.js"
 
-const Cell = function(data, width, height) {
+const Cell = function(data, width, height, auxCvs) {
+  this.auxCvs = auxCvs;
   this.width = width;
   this.height = height;
   this._data = data;
@@ -9,13 +10,15 @@ const Cell = function(data, width, height) {
   this.y = this._data.y*(this.height + 1);
   this.color;
   this.marker = new Marker(this.x, this.y, this.width, this.height);
-  this.marker.animation = Animator.spinT();
-
-  this.animation = undefined;
+  // this.marker.animation = Animator.spinT();
   this._enterListener = true;
 
   this.datax = this._data.x;
   this.datay = this._data.y;
+  this.animationWidth = Animator.Linear(this.width, this.width + 10, 30, 1, false) 
+  this.animationX = Animator.Linear(this.x, this.x - 5, 30, 1, false) 
+  this.animationY = Animator.Linear(this.y, this.y - 5, 30, 1, false) 
+
 }
 
 Cell.prototype.isHidden = function()  { return this._data.isHidden() };
@@ -25,14 +28,7 @@ Cell.prototype.isMine = function() {return this._data.isMine()};
 Cell.prototype.setColor = function(color) {return this.color = color};
 Cell.prototype.getColor = function(color) {return color};
 
-Cell.prototype.draw = function(ctx, auxCvs) {
-
-  //ctx.setTransform(1, 0, 0, 1, this.x, this.y);
-
-  if (this.animation.isRunning) {
-    // console.log("playing");
-    let remaining = this.animation.play(this); 
-  }
+Cell.prototype.draw = function(ctx) {
 
   ctx.fillStyle = this.color;
   ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -46,11 +42,7 @@ Cell.prototype.draw = function(ctx, auxCvs) {
     if (this.isMine()) {
       this.setColor("red");
     } else if (this.isLabeled()) {
-      if (this.marker.animation.isRunning) {
-        this.marker.animation.play(this.marker);
-      }
-      this.marker.draw(ctx, auxCvs);
-
+      this.setColor("darkblue");
     } else {
       this.setColor("brown");
     }
@@ -58,21 +50,34 @@ Cell.prototype.draw = function(ctx, auxCvs) {
 
   if (neighbors > 0) {
     // Each prerendered box is 50 wide and 50 high
-   ctx.drawImage(auxCvs, neighbors*50, 0, 50, 50, this.x, this.y, this.width, this.height);
+   ctx.drawImage(this.auxCvs, neighbors*50, 0, 50, 50, this.x, this.y, this.width, this.height);
   }
-  ctx.setTransform(1,0,0,1,0,0)
 };
+
+Cell.prototype.update = function() {
+  this.animationWidth.update();
+  this.animationX.update();
+  this.animationY.update();
+  this.width = this.animationWidth.value;
+  this.height = this.animationWidth.value;
+  this.x = this.animationX.value;
+  this.y = this.animationY.value;
+}
 
 
 Cell.prototype.onMouseEnter = function() {
-  // if (!this.animation.isRunning) {
-      this.animation.start();
-  // }
+  this.animationWidth.start();
+  this.animationX.start();
+  this.animationY.start();
 };
 
 Cell.prototype.onMouseExit = function() {
-      this.animation.stop();
-      this.animation.reset();
+  this.animationWidth.stop();
+  this.animationX.stop();
+  this.animationY.stop();
+  this.animationWidth.revert();
+  this.animationX.revert();
+  this.animationY.revert();
 };
 
 

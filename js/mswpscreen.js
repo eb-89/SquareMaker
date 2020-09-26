@@ -1,7 +1,7 @@
 import Cell from "./Cell.js"
 import Animator from "./animator.js"
 
-const Mswpscreen = function(model, params) {
+const Mswpscreen = function(ctx, auxCvs, model, params) {
   
   let _stateArray = model.getState();
 
@@ -11,21 +11,24 @@ const Mswpscreen = function(model, params) {
   let _cells = [];
 
   let hoveredCell; 
-
+  let _ctx = ctx;
+  let _auxCvs = auxCvs;
 
   return {
     name: 'MSWP',
 
     render: function(ctx, auxCvs) {
+
       for (let c of _cells) {
-        // This is a referential comparison
-        if (c !== hoveredCell) {
-          c.draw(ctx, auxCvs);
-        }
+        if (c === hoveredCell) { continue; }
+
+          c.update()
+          c.draw(ctx);
       }
-      
+
       if (hoveredCell) {
-        hoveredCell.draw(ctx, auxCvs);
+        hoveredCell.update();
+        hoveredCell.draw(ctx);
       }
     },
     getModelData() {
@@ -33,8 +36,9 @@ const Mswpscreen = function(model, params) {
 
       for (let i = 0; i < model.x; i++) {
         for (let j = 0; j < model.y; j++) {
-          _cells[j*model.x+i] = new Cell(_stateArray[i][j], width, height);
-          _cells[j*model.x+i].animation = Animator.pulseT();
+          let c = new Cell(_stateArray[i][j], width, height, _auxCvs);
+          // c.animation = Animator.pulse(_ctx);
+          _cells.push(c)
         }
       }
       hoveredCell = undefined;

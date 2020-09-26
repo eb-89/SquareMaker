@@ -1,69 +1,89 @@
 
-const Animation = function () {
-  this.t = 0;
-  this.isRunning = false;
+const Animation = function() {
+  // this.draw = draw;
   this.start = function () {
-      // this.t = 0;
-      this.isRunning = true;
+    this.isRunning = true;
   },
   this.stop = function () {
     this.isRunning = false;
   },
-  this.update = function (timestep) {
-    this.t += timestep;
-  },
   this.reset = function() {
     this.t = 0;
+  },
+  this.revert = function() {
+    this.reverted = !this.reverted
   }
-  this.duration = 0;
 }
 
-const PulseT = function(ctx, duration) { 
-  Animation.call(this);
-  if (duration) {  
-    this.duration = duration;
-    this.end = this.t + this.duration;
-  }
-  this.ctx = ctx;
+
+const Linear = function(from, to, duration, times, repeat ) {
+  this.from = from;
+  this.to = to;
+  // maybe
+  this.duration = duration;
+  this.times = times;
+  this.repeat = repeat;
+  this.t = 0;
+  this.value = from;
+  this.reverted;
 }
 
-PulseT.prototype.play = function(obj) {
+Linear.prototype = new Animation();
+Linear.prototype.update = function() {
+  this.reverted ? this.t-- : this.t++;
 
-    this.ctx.setTransform(1,0,0,1, obj.x + obj.width/2, obj.y+ obj.height/2);
-    this.ctx.transform(0.2*Math.sin(Math.PI + this.t/5) + 1, 0, 0, 0.2*Math.sin(Math.PI + this.t/5) + 1, 0 ,  0);
-    this.ctx.transform(1,0,0,1, -(obj.x + obj.width/2), -(obj.y+ obj.height/2));
 
-    if (this.end && this.end <= this.t) {
-      this.isRunning = false;
-      this.reset();
-    } else {
-      this.update(1);
+  // Broken.
+  if (this.isRunning) {
+    this.value = this.from + (this.to - this.from)/this.duration*this.t;
+  }
+
+  if (!this.reverted) {
+
+    if (this.repeat && this.t === this.duration) {
+      this.t = 0;
     }
-}
-
-
-const SpinT = function(ctx, duration) { 
-  Animation.call(this);
-  if (duration) {  
-    this.end = this.t + duration;
-  }
-  this.ctx = ctx;
-}
-
-SpinT.prototype.play = function(obj) {
-    // This does not reset the transform!!
-    this.ctx.transform(1,0,0,1, obj.x + obj.width/2, obj.y + obj.height/2);
-    this.ctx.transform(Math.sin(this.t/5), 0, 0, 1, 0 ,  0);
-    this.ctx.transform(1,0,0,1, -(obj.x + obj.width/2), -(obj.y + obj.height/2));
-    
-    if (this.end && this.end < this.t) {
-      this.isRunning = false;
-      this.reset();
-    } else {
-      this.update(1);
+  } else {
+    if (this.repeat && this.t === 0) {
+      this.t = this.duration;
     }
+  }
+
+  if (this.reverted) {
+
+    if (this.t == 0)  {
+      this.stop()
+    } 
+  }  else {
+    if (this.t == this.duration) {
+      this.stop();
+    } 
+  }
+  return this.t;
 }
 
+
+const Sine = function(from, to, duration, times, repeat ) {
+  Animation.call(this, from, to, duration, times, repeat);
+  this.period = 2*Math.PI;
+}
+Sine.prototype = new Animation();
+Sine.prototype.update = function() {
+  this.t++;
+  if (this.isRunning) {
+    this.value = Math.sin(this.period*(this.t)/this.duration);
+  }
+
+
+  if (this.repeat && t === this.duration) {
+    t = 0;
+  }
+  return t;
+}
+
+Sine.prototype.setPeriod = function(period) {
+  this.period = period;
+}
 
 //const Blow = function(ctx, timer) {
 //  this.timer = timer;
@@ -97,26 +117,31 @@ SpinT.prototype.play = function(obj) {
 
 const AnimationFactory = function() {
   
-    let _ctx;
     return {
-    // Animations
 
-      setContext(ctx) {
-        _ctx = ctx;
+      expand() {
+        let t1 = (ctx, obj,t) => {
+          obj.width += 0.1;
+          obj.height += 0.1;
+        }
+
+        // return new Animation([t1], _ctx); 
       },
 
-      pulseT(duration) {
-        return new PulseT(_ctx, duration); 
+      Linear(from, to, duration, times, repeat) {
+        return new Linear(from, to, duration, times, repeat); 
       },
-
-
-      spinT(duration) {
-        return new SpinT(_ctx, duration); 
-      },
-
-
   }
 } 
 
+
+// TODO:
+// Transforms
+// Example:
+// let t1 = (ctx, obj,t) => {
+//   ctx.setTransform(1,0,0,1, obj.x + obj.width/2, obj.y+ obj.height/2);
+//   ctx.transform(0.2*Math.sin(t/5) + 1, 0, 0, 0.2*Math.sin(t/5) + 1, 0 ,  0);
+//   ctx.transform(1,0,0,1, -(obj.x + obj.width/2), -(obj.y+ obj.height/2));
+// }
 
 export default AnimationFactory();
