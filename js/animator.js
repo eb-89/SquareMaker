@@ -8,10 +8,15 @@ const Animation = function() {
     this.isRunning = false;
   },
   this.reset = function() {
-    this.t = 0;
+    if (this.direction == 1) {
+      this.t = 0;
+    } else {
+      this.t = this.duration + this.delay;  
+    }
+    this.value = this.from;
   },
   this.revert = function() {
-    this.reverted = !this.reverted
+    this.direction = -1*this.direction
   }
 }
 
@@ -21,44 +26,65 @@ const Linear = function(from, to, duration, times, repeat ) {
   this.to = to;
   // maybe
   this.duration = duration;
+  this.direction = 1;
   this.times = times;
   this.repeat = repeat;
   this.t = 0;
   this.value = from;
-  this.reverted;
+  this.reverted = false;
+  this.isRunning = false;
+  this.delay = 0;
 }
 
 Linear.prototype = new Animation();
+console.log(Linear.prototype);
 Linear.prototype.update = function() {
-  this.reverted ? this.t-- : this.t++;
-
-
-  // Broken.
   if (this.isRunning) {
-    this.value = this.from + (this.to - this.from)/this.duration*this.t;
-  }
 
-  if (!this.reverted) {
-
-    if (this.repeat && this.t === this.duration) {
+    // clamp;
+    if (this.t < 0) {
       this.t = 0;
     }
-  } else {
-    if (this.repeat && this.t === 0) {
-      this.t = this.duration;
+
+    if (this.t > this.duration + this.delay) {
+      this.t = this.duration + this.delay;
+    }
+
+    this.t += this.direction;
+
+    if (0 <= this.t && this.t <= this.duration + this.delay) {
+      if (this.t >= this.delay) {
+        this.value = this.from + (this.to - this.from)/this.duration*(this.t - this.delay);
+      }
+      // console.log(this.value);
+    } else {
+        this.stop();
     }
   }
 
-  if (this.reverted) {
+  //if (!this.reverted) {
 
-    if (this.t == 0)  {
-      this.stop()
-    } 
-  }  else {
-    if (this.t == this.duration) {
-      this.stop();
-    } 
-  }
+  //  if (this.repeat && this.t === this.duration) {
+  //    this.t = 0;
+  //  } else {
+  //    this.stop();
+  //  }
+  //} else {
+  //  if (this.repeat && this.t === 0) {
+  //    this.t = this.duration;
+  //  }
+  //}
+
+  //if (this.reverted) {
+
+  //  if (this.t == 0)  {
+  //    this.stop()
+  //  } 
+  //}  else {
+  //  if (this.t == this.duration) {
+  //    this.stop();
+  //  } 
+  //}
   return this.t;
 }
 
@@ -118,19 +144,9 @@ Sine.prototype.setPeriod = function(period) {
 const AnimationFactory = function() {
   
     return {
-
-      expand() {
-        let t1 = (ctx, obj,t) => {
-          obj.width += 0.1;
-          obj.height += 0.1;
-        }
-
-        // return new Animation([t1], _ctx); 
-      },
-
       Linear(from, to, duration, times, repeat) {
         return new Linear(from, to, duration, times, repeat); 
-      },
+      }
   }
 } 
 

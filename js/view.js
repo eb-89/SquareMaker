@@ -89,6 +89,15 @@ const View = function(cvs, auxCvs, model) {
               break;
             case 2:
               model.mark(cell.datax, cell.datay);
+              if (cell.isLabeled()) {
+                cell.marker.animationWidth.start();
+                cell.marker.animationX.start();
+              } else {
+                cell.marker.animationWidth.stop();
+                cell.marker.animationWidth.reset();
+                cell.marker.animationX.stop();
+                cell.marker.animationX.reset();
+              }
               break;
           }
 
@@ -103,10 +112,10 @@ const View = function(cvs, auxCvs, model) {
               model.start();
               model.init();
               mswpscreen.getModelData();
-
-              // transition.startTransition(function () {
+              // transition.reset();
+              transition.startTransition(function () {
                 screen = mswpscreen;
-              // })
+              })
 
             break;
             case 'restart':
@@ -137,9 +146,11 @@ const View = function(cvs, auxCvs, model) {
     render: function() {
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
+
       screen.render(ctx, auxCvs);
 
       if (transition.isRunning) {
+        transition.update();
         transition.render(ctx);
       }
 

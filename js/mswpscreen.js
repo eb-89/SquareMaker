@@ -33,6 +33,7 @@ const Mswpscreen = function(ctx, auxCvs, model, params) {
     },
     getModelData() {
        _stateArray = model.getState();
+       _cells = [];
 
       for (let i = 0; i < model.x; i++) {
         for (let j = 0; j < model.y; j++) {
@@ -41,6 +42,7 @@ const Mswpscreen = function(ctx, auxCvs, model, params) {
           _cells.push(c)
         }
       }
+      // console.log(_cells);
       hoveredCell = undefined;
     },
     handleClick(mouseX, mouseY, cb) {

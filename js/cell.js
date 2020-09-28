@@ -10,14 +10,13 @@ const Cell = function(data, width, height, auxCvs) {
   this.y = this._data.y*(this.height + 1);
   this.color;
   this.marker = new Marker(this.x, this.y, this.width, this.height);
-  // this.marker.animation = Animator.spinT();
   this._enterListener = true;
 
   this.datax = this._data.x;
   this.datay = this._data.y;
-  this.animationWidth = Animator.Linear(this.width, this.width + 10, 30, 1, false) 
-  this.animationX = Animator.Linear(this.x, this.x - 5, 30, 1, false) 
-  this.animationY = Animator.Linear(this.y, this.y - 5, 30, 1, false) 
+  this.animationWidth = Animator.Linear(this.width, this.width + 6, 10, 1, false) 
+  this.animationX = Animator.Linear(this.x, this.x - 3, 10, 1, false) 
+  this.animationY = Animator.Linear(this.y, this.y - 3, 10, 1, false) 
 
 }
 
@@ -42,14 +41,13 @@ Cell.prototype.draw = function(ctx) {
     if (this.isMine()) {
       this.setColor("red");
     } else if (this.isLabeled()) {
-      this.setColor("darkblue");
+      this.marker.draw(ctx);
     } else {
       this.setColor("brown");
     }
   } 
 
   if (neighbors > 0) {
-    // Each prerendered box is 50 wide and 50 high
    ctx.drawImage(this.auxCvs, neighbors*50, 0, 50, 50, this.x, this.y, this.width, this.height);
   }
 };
@@ -62,23 +60,36 @@ Cell.prototype.update = function() {
   this.height = this.animationWidth.value;
   this.x = this.animationX.value;
   this.y = this.animationY.value;
+
+  this.marker.update();
 }
 
 
 Cell.prototype.onMouseEnter = function() {
-  this.animationWidth.start();
+
+  this.animationWidth.direction = 1;
+  this.animationWidth.start(); 
+
+  this.animationX.direction = 1;
   this.animationX.start();
+
+  this.animationY.direction = 1;
   this.animationY.start();
 };
 
 Cell.prototype.onMouseExit = function() {
-  this.animationWidth.stop();
-  this.animationX.stop();
-  this.animationY.stop();
-  this.animationWidth.revert();
-  this.animationX.revert();
-  this.animationY.revert();
+
+  this.animationWidth.direction =  - 1;
+  this.animationWidth.start();  
+
+  this.animationX.direction =  - 1;
+  this.animationX.start();
+  
+  this.animationY.direction =  - 1;
+  this.animationY.start();
+
 };
+
 
 
 export default Cell;
