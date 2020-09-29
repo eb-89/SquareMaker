@@ -24,7 +24,6 @@ const Animation = function() {
 const Linear = function(from, to, duration, times, repeat ) {
   this.from = from;
   this.to = to;
-  // maybe
   this.duration = duration;
   this.direction = 1;
   this.times = times;
@@ -41,13 +40,16 @@ console.log(Linear.prototype);
 Linear.prototype.update = function() {
   if (this.isRunning) {
 
-    // clamp;
-    if (this.t < 0) {
-      this.t = 0;
-    }
-
-    if (this.t > this.duration + this.delay) {
-      this.t = this.duration + this.delay;
+    if (this.repeat) {
+      if (this.direction == -1) {
+        if (this.t == 0) {
+          this.t = this.duration + this.delay
+        }
+      } else {
+        if (this.t == this.duration + this.delay) {
+          this.t = 0
+        }
+      }
     }
 
     this.t += this.direction;
@@ -56,45 +58,22 @@ Linear.prototype.update = function() {
       if (this.t >= this.delay) {
         this.value = this.from + (this.to - this.from)/this.duration*(this.t - this.delay);
       }
-      // console.log(this.value);
     } else {
-        this.stop();
+      this.stop();
     }
   }
 
-  //if (!this.reverted) {
-
-  //  if (this.repeat && this.t === this.duration) {
-  //    this.t = 0;
-  //  } else {
-  //    this.stop();
-  //  }
-  //} else {
-  //  if (this.repeat && this.t === 0) {
-  //    this.t = this.duration;
-  //  }
-  //}
-
-  //if (this.reverted) {
-
-  //  if (this.t == 0)  {
-  //    this.stop()
-  //  } 
-  //}  else {
-  //  if (this.t == this.duration) {
-  //    this.stop();
-  //  } 
-  //}
   return this.t;
 }
 
 
-const Sine = function(from, to, duration, times, repeat ) {
+const Sinusodial = function(from, to, duration, times, repeat ) {
   Animation.call(this, from, to, duration, times, repeat);
   this.period = 2*Math.PI;
 }
-Sine.prototype = new Animation();
-Sine.prototype.update = function() {
+
+Sinusodial.prototype = new Animation();
+Sinusodial.prototype.update = function() {
   this.t++;
   if (this.isRunning) {
     this.value = Math.sin(this.period*(this.t)/this.duration);
@@ -102,12 +81,12 @@ Sine.prototype.update = function() {
 
 
   if (this.repeat && t === this.duration) {
-    t = 0;
+    this.t = 0;
   }
-  return t;
+  return this.t;
 }
 
-Sine.prototype.setPeriod = function(period) {
+Sinusodial.prototype.setPeriod = function(period) {
   this.period = period;
 }
 
@@ -146,6 +125,9 @@ const AnimationFactory = function() {
     return {
       Linear(from, to, duration, times, repeat) {
         return new Linear(from, to, duration, times, repeat); 
+      },
+      Sinusodial(from, to, duration, times, repeat) {
+        return new Sinusodial(from, to, duration, times, repeat); 
       }
   }
 } 

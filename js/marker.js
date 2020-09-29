@@ -6,25 +6,31 @@ const Marker = function(x, y, width, height) {
   this.width = width;
   this.height = height;
   this.image = undefined;
-  this.radius = 10
-  this.animationWidth = Animator.Linear(this.radius, 3, 10, 1, true);
-  this.animationX = Animator.Linear(this.x, this.x+ 20, 20,1,true);
+  this.radius = this.width/2 -4
+  this.animationRadius = Animator.Linear(this.radius, this.radius-3, 30, 1, true);
 }
 
 
 Marker.prototype.draw = function(ctx, auxCvs) {
   ctx.strokeStyle = "green";
-  ctx.lineWidth = 5;
+  ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.arc(this.x + this.width/2, this.y + this.height/2, this.radius, 0, 2*Math.PI);
   ctx.stroke();
 };
 
 Marker.prototype.update = function() { 
-  this.animationWidth.update();
-  // this.animationX.update();
-  this.x = this.animationX.value;
-  this.radius = this.animationWidth.value;
+  let time = this.animationRadius.update();
+  if (this.animationRadius.isRunning) {
+    console.log(this.radius);
+  }
+  if (time == 29 && this.animationRadius.direction == 1) {
+    this.animationRadius.revert();
+  }
+  if (time == 1 && this.animationRadius.direction == -1) {
+    this.animationRadius.revert();
+  }
+  this.radius = this.animationRadius.value;
 }
 
 export default Marker;

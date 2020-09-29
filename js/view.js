@@ -90,13 +90,10 @@ const View = function(cvs, auxCvs, model) {
             case 2:
               model.mark(cell.datax, cell.datay);
               if (cell.isLabeled()) {
-                cell.marker.animationWidth.start();
-                cell.marker.animationX.start();
+                cell.marker.animationRadius.start();
               } else {
-                cell.marker.animationWidth.stop();
-                cell.marker.animationWidth.reset();
-                cell.marker.animationX.stop();
-                cell.marker.animationX.reset();
+                cell.marker.animationRadius.stop();
+                cell.marker.animationRadius.reset();
               }
               break;
           }
