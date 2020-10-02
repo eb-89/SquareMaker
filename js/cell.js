@@ -8,7 +8,6 @@ const Cell = function(data, width, height, auxCvs) {
   this._data = data;
   this.x = this._data.x*(this.width + 1);
   this.y = this._data.y*(this.height + 1);
-  this.color;
   this.marker = new Marker(this.x, this.y, this.width, this.height);
   this._enterListener = true;
 
@@ -17,6 +16,7 @@ const Cell = function(data, width, height, auxCvs) {
   this.animationWidth = Animator.Linear(this.width, this.width + 6, 10, 1, false) 
   this.animationX = Animator.Linear(this.x, this.x - 3, 10, 1, false) 
   this.animationY = Animator.Linear(this.y, this.y - 3, 10, 1, false) 
+  this.colors = { hidden: "darkgray", shown: "lightgray" }
 
 }
 
@@ -24,28 +24,38 @@ Cell.prototype.isHidden = function()  { return this._data.isHidden() };
 Cell.prototype.getNeighbors = function()  {return this._data.getNeighbors()};
 Cell.prototype.isLabeled = function() {return this._data.isLabeled()};
 Cell.prototype.isMine = function() {return this._data.isMine()};
-Cell.prototype.setColor = function(color) {return this.color = color};
+Cell.prototype.setColorscheme = function(colors) {
+  for (const c in colors) {
+    // console.log("setting", colors);
+    this.colors[c] = colors[c];
+  }
+  // console.log(this.colors)
+};
 Cell.prototype.getColor = function(color) {return color};
 
 Cell.prototype.draw = function(ctx) {
 
-  ctx.fillStyle = this.color;
-  ctx.fillRect(this.x, this.y, this.width, this.height);
 
   let neighbors;
   if (!this.isHidden()) {
-     this.setColor("darkgray")
+     ctx.fillStyle = this.colors.shown;
      neighbors = this.getNeighbors();
     
   } else {
     if (this.isMine()) {
-      this.setColor("red");
-    } else if (this.isLabeled()) {
-      this.marker.draw(ctx);
+      ctx.fillStyle = "darkred";
     } else {
-      this.setColor("brown");
+      ctx.fillStyle = this.colors.hidden;
     }
   } 
+
+  ctx.fillRect(this.x, this.y, this.width, this.height);
+
+  if (this.isHidden() && this.isLabeled()) {
+      this.marker.draw(ctx);
+      console.log("drawing");
+  }
+
 
   if (neighbors > 0) {
    ctx.drawImage(this.auxCvs, neighbors*50, 0, 50, 50, this.x, this.y, this.width, this.height);

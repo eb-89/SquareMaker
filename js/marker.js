@@ -21,9 +21,6 @@ Marker.prototype.draw = function(ctx, auxCvs) {
 
 Marker.prototype.update = function() { 
   let time = this.animationRadius.update();
-  if (this.animationRadius.isRunning) {
-    console.log(this.radius);
-  }
   if (time == 29 && this.animationRadius.direction == 1) {
     this.animationRadius.revert();
   }

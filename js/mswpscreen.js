@@ -12,7 +12,7 @@ const Mswpscreen = function(ctx, auxCvs, model, params) {
 
   let hoveredCell; 
   let _ctx = ctx;
-  let _auxCvs = auxCvs;
+  let _auxCvs = params.auxCvs;
 
   return {
     name: 'MSWP',
@@ -38,7 +38,7 @@ const Mswpscreen = function(ctx, auxCvs, model, params) {
       for (let i = 0; i < model.x; i++) {
         for (let j = 0; j < model.y; j++) {
           let c = new Cell(_stateArray[i][j], width, height, _auxCvs);
-          // c.animation = Animator.pulse(_ctx);
+          c.setColorscheme(params.cfg.colorscheme);
           _cells.push(c)
         }
       }

@@ -6,6 +6,12 @@ const menu = function() {
     width: 200,
     height: 100
   }
+  const cfgBtn= {
+    x: 100,
+    y: startBtn.y + startBtn.height + 10,
+    width: 200,
+    height: 100
+  }
   
   return {
     name: 'MENU',
@@ -17,6 +23,7 @@ const menu = function() {
       // TODO: Change this!
       ctx.fillRect(startBtn.x, startBtn.y, 100, 50);
       ctx.drawImage(auxCvs, 0, 50, 100, 50, startBtn.x + (startBtn.width - 100)/2, startBtn.y, 100, 50);
+      ctx.drawImage(auxCvs, 0, 50, 100, 50, cfgBtn.x + (cfgBtn.width - 100)/2, cfgBtn.y, 100, 50);
 
       // Title
       ctx.drawImage(auxCvs, 0, 200, 150, 50, (ctx.canvas.width-150)/2, 20, 150, 50);
@@ -29,6 +36,14 @@ const menu = function() {
         && (startBtn.y + startBtn.height > y)
       ) {
         cb("start")
+      }
+      if (
+        x > cfgBtn.x 
+        && y > cfgBtn.y 
+        && (cfgBtn.x + cfgBtn.width > x)
+        && (cfgBtn.y + cfgBtn.height > y)
+      ) {
+        cb("config")
       }
     },
 

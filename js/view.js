@@ -6,67 +6,38 @@ import Menuscreen from "./menuscreen.js"
 import Mswpscreen from "./mswpscreen.js"
 import Endscreen from "./endscreen.js"
 import Transition from "./transition.js"
-// import Timer from "./timer.js"
+import Prerender from "./prerender.js"
+import Cfgscreen from "./cfgscreen.js"
 
 
 const View = function(cvs, auxCvs, model) {
-
-
 
   let ctx = cvs.getContext("2d")
   let auxCtx = auxCvs.getContext("2d");
 
   // Animator.setContext(ctx);
+  const prerender = Prerender(auxCvs);
 
+  let cfg = {
+    colorscheme: {hidden: "red", shown: "yellow"}
+  }
 
   let mswp_params = {
-    cellW: 20,
-    cellH: 20,
+    cellW: 25,
+    cellH: 25,
+    auxCvs: prerender.auxCvs,
+    glyphs: prerender.numberGlyphs,
+    cfg: cfg
   }
 
-  // prerender
+  let prerenderCfg = 0; 
 
-  let ts = 30;
-  let text;
-  auxCtx.font = `normal normal bold ${ts}px Courier`;
-  for (let i = 0; i<10; i++) {
-    text = `${i}`;
-    auxCtx.fillStyle = "black";
-    auxCtx.setTransform(1, 0, 0, 1, 50*i, 0);
-    auxCtx.fillText(text, (50 - auxCtx.measureText(text).width)/2, 50/2 + ts/2 - 4);
-  }
 
-  ts = 15;
-  auxCtx.font = `normal normal bold ${ts}px Courier`;
-  auxCtx.setTransform(1, 0, 0, 1, 0, 50);
-  text = `Start`;
-  auxCtx.fillText(text, (100 - auxCtx.measureText(text).width)/2, ts);
-
-  ts = 15;
-  auxCtx.font = `normal normal bold ${ts}px Courier`;
-  auxCtx.setTransform(1, 0, 0, 1, 0, 100);
-  text = `restart`;
-  auxCtx.fillText(text, (100 - auxCtx.measureText(text).width)/2, ts);
-
-  ts = 15;
-  auxCtx.font = `normal normal bold ${ts}px Courier`;
-  auxCtx.setTransform(1, 0, 0, 1, 0, 150);
-  text = `home`;
-  auxCtx.fillText(text, (100 - auxCtx.measureText(text).width)/2, ts);
-
-  ts = 30;
-  auxCtx.font = `normal normal bold ${ts}px Courier`;
-  auxCtx.fontColor = `blue`;
-  auxCtx.setTransform(1, 0, 0, 1, 0, 200);
-  // ctx.fillStyle = "blue";
-  text = `Squares`;
-  auxCtx.fillText(text, (150 - auxCtx.measureText(text).width)/2, ts);
-
-  // end of prerender
 
   let menuscreen = Menuscreen();
   let mswpscreen = Mswpscreen(ctx, auxCvs, model, mswp_params);
   let endscreen = Endscreen();
+  let configscreen = Cfgscreen(cfg);
   // let currentScreen = screens.MSWP;
   let screen = menuscreen;
 
@@ -125,6 +96,9 @@ const View = function(cvs, auxCvs, model) {
               model.end();
               screen = menuscreen;
             break;
+            case 'config':
+              screen = configscreen;
+              break;
           }
         });
       }
