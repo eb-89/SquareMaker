@@ -16,7 +16,7 @@ const menu = function() {
   return {
     name: 'MENU',
     render: function(ctx, auxCvs) {
-      ctx.fillStyle = "yellow";
+      ctx.fillStyle = "lightblue";
 
       ctx.fillRect(startBtn.x,startBtn.y,startBtn.width,startBtn.height);
       // Now here we have a bunch of magic numbers...

@@ -34,17 +34,23 @@ Button.prototype.setOnClickHandler = function(handler) {
   this.handler = handler;
 }
 
-function RadioButtonSelector(cfg) {
+function RadioButtonSelector(cfg, opts, x, y) {
   this.cfg = cfg;
-  console.log(cfg)
+  // console.log(cfg)
+  this.x = x;
+  this.y = y;
   let buttons = [];
-  for (let i = 0; i < 3; i++) {
-    const btn = new Button(i*50, 50, 30, 50, i);
-    // console.log(btn);
+
+  let count = 0;
+
+  for (const opt of opts) {
+    const btn = new Button(count*(this.x+5), this.y, 30, 50, count);
+
     btn.setOnClickHandler(function (idx) {
       btn.color = "yellow";
-      this.cfg.colorscheme.hidden = "black";
-      this.cfg.colorscheme.shown = "lightblue";
+      for (const prop in opt) {
+        this.cfg[prop] = opt[prop];
+      }
       for (const btn of buttons) {
         if (btn.idx != idx) {
           btn.color = "blue";
@@ -52,10 +58,10 @@ function RadioButtonSelector(cfg) {
       }
     }.bind(this))
     buttons.push(btn);
+    count++;
   }
 
   this.buttons = buttons;
-  // this.length = num;
 }
 
 RadioButtonSelector.prototype.draw = function(ctx) {
@@ -76,8 +82,21 @@ RadioButtonSelector.prototype.select = function(num) {
   }
 }
 
+RadioButtonSelector.prototype.handleClick = function(x,y) {
+  for (const btn of this.buttons) {
+    if (
+      x > btn.x 
+      && y > btn.y 
+      && (btn.x + btn.width > x)
+      && (btn.y + btn.height > y)
+    ) {
+      // console.log("true");
+      btn.onClick();
+    }
+  }
+}
 
-const cfg = function(cfg) {
+const cfg = function(modelCfg, viewCfg) {
 
   // console.log(cfg);
 
@@ -92,34 +111,42 @@ const cfg = function(cfg) {
     }
   }
 
+  let vopts = [
+    {shown: "red", hidden: "blue"},
+    {shown: "darkgreen", hidden: "lightgreen"},
+    {shown: "darkgray", hidden: "lightgray"},
+  ]
 
-  let _cfg = cfg;
-  const selector = new RadioButtonSelector(_cfg);
+  let mopts = [
+    {x: 10, y: 10},
+    {x: 15, y: 15}
+  ]
+
+  let markeropts = [
+    { type: "circle", color: "pink" },
+    {  type: "square", color: "cyan" }
+  ]
+
+  let _mcfg = modelCfg;
+  let _vcfg = viewCfg;
+
+  const selector_color = new RadioButtonSelector(_vcfg.colorscheme, vopts, 50, 50);
+  const selector_size = new RadioButtonSelector(_mcfg.dims, mopts, 50, 150);
+  const selector_minetype = new RadioButtonSelector(_vcfg.markertype, markeropts, 50, 250);
 
   return {
     name: 'CFG',
     render: function(ctx, auxCvs) {
-      // ctx.fillStyle = "cyan";
-
-      //for (const btn of buttons) {
-      //  ctx.fillRect(btn.x, btn.y, btn.width, btn.height);
-      //}
-      selector.draw(ctx);
+      selector_color.draw(ctx);
+      selector_size.draw(ctx);
+      selector_minetype.draw(ctx);
       back.draw(ctx);
 
     },
-    handleClick: function(x,y, cb ) {
-      for (const btn of selector.buttons) {
-        if (
-          x > btn.x 
-          && y > btn.y 
-          && (btn.x + btn.width > x)
-          && (btn.y + btn.height > y)
-        ) {
-          // console.log("true");
-          btn.onClick();
-        }
-      }
+    handleClick: function(x,y, redirect) {
+      selector_color.handleClick(x,y);
+      selector_size.handleClick(x,y);
+      selector_minetype.handleClick(x,y)
       
       if (
         x > back.x 
@@ -128,7 +155,7 @@ const cfg = function(cfg) {
         && (back.y + back.height > y)
       ) {
         // console.log("true");
-        cb("home");
+        redirect("home");
       }
 
     },

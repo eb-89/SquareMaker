@@ -21,7 +21,7 @@ const jsonlog = function(log, obj) {
 function init() {
 
   model = Model(16,16,30);
-  model.init();
+  // model.init();
   model.start();
 
   cvs = document.getElementById("jscvs");

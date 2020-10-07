@@ -8,14 +8,24 @@ const Marker = function(x, y, width, height) {
   this.image = undefined;
   this.radius = this.width/2 -4
   this.animationRadius = Animator.Linear(this.radius, this.radius-3, 30, 1, true);
+  this.type = "circle"
+  this.color="green"
 }
 
 
-Marker.prototype.draw = function(ctx, auxCvs) {
-  ctx.strokeStyle = "green";
+Marker.prototype.draw = function(ctx) {
+  ctx.strokeStyle = this.color;
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.arc(this.x + this.width/2, this.y + this.height/2, this.radius, 0, 2*Math.PI);
+  switch (this.type) {
+    case "circle": 
+      ctx.arc(this.x + this.width/2, this.y + this.height/2, this.radius, 0, 2*Math.PI);
+      break;
+    case "square":
+      ctx.strokeStyle = this.color;
+      ctx.rect(this.x+2, this.y+2, this.width-4, this.height-4);
+      break;
+  }
   ctx.stroke();
 };
 
@@ -27,6 +37,7 @@ Marker.prototype.update = function() {
   if (time == 1 && this.animationRadius.direction == -1) {
     this.animationRadius.revert();
   }
+
   this.radius = this.animationRadius.value;
 }
 

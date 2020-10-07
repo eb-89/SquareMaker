@@ -15,11 +15,18 @@ const View = function(cvs, auxCvs, model) {
   let ctx = cvs.getContext("2d")
   let auxCtx = auxCvs.getContext("2d");
 
-  // Animator.setContext(ctx);
   const prerender = Prerender(auxCvs);
 
-  let cfg = {
-    colorscheme: {hidden: "red", shown: "yellow"}
+  // View options, default
+  let viewCfg = {
+    colorscheme: {hidden: "red", shown: "yellow"},
+    markertype: { type: "circle", color: "green" }
+  }
+
+  // Model options, default
+  let modelCfg = {
+      dims: {x: 10, y: 10},
+      mines: 20
   }
 
   let mswp_params = {
@@ -27,7 +34,7 @@ const View = function(cvs, auxCvs, model) {
     cellH: 25,
     auxCvs: prerender.auxCvs,
     glyphs: prerender.numberGlyphs,
-    cfg: cfg
+    cfg: viewCfg
   }
 
   let prerenderCfg = 0; 
@@ -37,7 +44,7 @@ const View = function(cvs, auxCvs, model) {
   let menuscreen = Menuscreen();
   let mswpscreen = Mswpscreen(ctx, auxCvs, model, mswp_params);
   let endscreen = Endscreen();
-  let configscreen = Cfgscreen(cfg);
+  let configscreen = Cfgscreen(modelCfg, viewCfg);
   // let currentScreen = screens.MSWP;
   let screen = menuscreen;
 
@@ -77,8 +84,8 @@ const View = function(cvs, auxCvs, model) {
         screen.handleClick(mouseX, mouseY, function(answer) {
           switch(answer) {
             case 'start':
+              model.init(modelCfg);
               model.start();
-              model.init();
               mswpscreen.getModelData();
               // transition.reset();
               transition.startTransition(function () {
@@ -87,8 +94,8 @@ const View = function(cvs, auxCvs, model) {
 
             break;
             case 'restart':
+              model.init(modelCfg);
               model.start();
-              model.init();
               mswpscreen.getModelData();
               screen = mswpscreen;
             break;

@@ -60,8 +60,11 @@ const Mswp = function(x, y, noOfMines) {
       return _running;
     },
 
-    init: function() {
-      _state = _initializeState(_x, _y, noOfMines);
+    init: function(mcfg) {
+      console.log(mcfg);
+      this.x = mcfg.dims.x;
+      this.y = mcfg.dims.y;
+      _state = _initializeState(mcfg.dims.x, mcfg.dims.y, mcfg.mines);
     },
 
     start: function () {
@@ -111,6 +114,8 @@ function _initializeState(i, j, noOfMines) {
       state[ii][jj] = new Cell(ii, jj, true, false, false);
     }
   }
+
+  console.log("state is", state);
 
   _addMines(state, noOfMines);
 

@@ -26,11 +26,14 @@ Cell.prototype.isLabeled = function() {return this._data.isLabeled()};
 Cell.prototype.isMine = function() {return this._data.isMine()};
 Cell.prototype.setColorscheme = function(colors) {
   for (const c in colors) {
-    // console.log("setting", colors);
     this.colors[c] = colors[c];
   }
-  // console.log(this.colors)
 };
+Cell.prototype.setMarker = function(cfg) {
+  this.marker.type = cfg.type;
+  this.marker.color = cfg.color;
+}
+
 Cell.prototype.getColor = function(color) {return color};
 
 Cell.prototype.draw = function(ctx) {
@@ -53,7 +56,6 @@ Cell.prototype.draw = function(ctx) {
 
   if (this.isHidden() && this.isLabeled()) {
       this.marker.draw(ctx);
-      console.log("drawing");
   }
 
 

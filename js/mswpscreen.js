@@ -34,11 +34,16 @@ const Mswpscreen = function(ctx, auxCvs, model, params) {
     getModelData() {
        _stateArray = model.getState();
        _cells = [];
+          console.log("State is ", _stateArray);
+
 
       for (let i = 0; i < model.x; i++) {
         for (let j = 0; j < model.y; j++) {
           let c = new Cell(_stateArray[i][j], width, height, _auxCvs);
+
+          // Eeeh refactor this...
           c.setColorscheme(params.cfg.colorscheme);
+          c.setMarker(params.cfg.markertype);
           _cells.push(c)
         }
       }
