@@ -13,6 +13,8 @@ const menu = function() {
     height: 100
   }
   
+  let navigationHandler;
+
   return {
     name: 'MENU',
     render: function(ctx, auxCvs) {
@@ -28,14 +30,17 @@ const menu = function() {
       // Title
       ctx.drawImage(auxCvs, 0, 200, 150, 50, (ctx.canvas.width-150)/2, 20, 150, 50);
     },
-    handleClick: function(x,y, cb ) {
+    handleClick: function(evt ) {
+      const rect = evt.target.getBoundingClientRect();
+      const x = evt.clientX - rect.x;
+      const y = evt.clientY - rect.y;
       if (
         x > startBtn.x 
         && y > startBtn.y 
         && (startBtn.x + startBtn.width > x)
         && (startBtn.y + startBtn.height > y)
       ) {
-        cb("start")
+        navigationHandler("start")
       }
       if (
         x > cfgBtn.x 
@@ -43,12 +48,15 @@ const menu = function() {
         && (cfgBtn.x + cfgBtn.width > x)
         && (cfgBtn.y + cfgBtn.height > y)
       ) {
-        cb("config")
+        navigationHandler("config")
       }
     },
 
     handleMouseMove: function(x,y) {
       //no-op;
+    },
+    setNavigationHandler(nav) {
+      navigationHandler = nav;
     }
   }
 }

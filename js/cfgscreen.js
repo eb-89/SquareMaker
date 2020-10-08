@@ -111,6 +111,8 @@ const cfg = function(modelCfg, viewCfg) {
     }
   }
 
+  let navigationHandler;
+
   let vopts = [
     {shown: "red", hidden: "blue"},
     {shown: "darkgreen", hidden: "lightgreen"},
@@ -143,7 +145,12 @@ const cfg = function(modelCfg, viewCfg) {
       back.draw(ctx);
 
     },
-    handleClick: function(x,y, redirect) {
+    handleClick: function(evt) {
+
+      const rect = evt.target.getBoundingClientRect();
+      const x = evt.clientX - rect.x;
+      const y = evt.clientY - rect.y;
+      
       selector_color.handleClick(x,y);
       selector_size.handleClick(x,y);
       selector_minetype.handleClick(x,y)
@@ -154,14 +161,16 @@ const cfg = function(modelCfg, viewCfg) {
         && (back.x + back.width > x)
         && (back.y + back.height > y)
       ) {
-        // console.log("true");
-        redirect("home");
+        navigationHandler("home");
       }
 
     },
 
     handleMouseMove: function(x,y) {
       //no-op;
+    },
+    setNavigationHandler(nav) {
+      navigationHandler = nav;
     }
   }
 }

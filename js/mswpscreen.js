@@ -14,14 +14,13 @@ const Mswpscreen = function(ctx, auxCvs, model, params) {
   let _ctx = ctx;
   let _auxCvs = params.auxCvs;
 
+  let navigationHandler;
+
   return {
-    name: 'MSWP',
 
     render: function(ctx, auxCvs) {
-
       for (let c of _cells) {
         if (c === hoveredCell) { continue; }
-
           c.update()
           c.draw(ctx);
       }
@@ -34,9 +33,7 @@ const Mswpscreen = function(ctx, auxCvs, model, params) {
     getModelData() {
        _stateArray = model.getState();
        _cells = [];
-          console.log("State is ", _stateArray);
-
-
+       
       for (let i = 0; i < model.x; i++) {
         for (let j = 0; j < model.y; j++) {
           let c = new Cell(_stateArray[i][j], width, height, _auxCvs);
@@ -47,13 +44,32 @@ const Mswpscreen = function(ctx, auxCvs, model, params) {
           _cells.push(c)
         }
       }
-      // console.log(_cells);
+
       hoveredCell = undefined;
     },
-    handleClick(mouseX, mouseY, cb) {
-      // let cell = _getCell(mouseX, mouseY, _cells)
+    handleClick(evt) {
+      const rect = evt.target.getBoundingClientRect();
+      const mouseX = evt.clientX - rect.x;
+      const mouseY = evt.clientY - rect.y;
       if (hoveredCell) {
-        cb(hoveredCell);
+        switch (evt.button) {
+          case 0: 
+            model.handleAction(hoveredCell.datax, hoveredCell.datay);
+            if (!model.isRunning()) {
+              // activeScreen = endscreen;
+              console.log("DEATH");
+            }
+            break;
+          case 2:
+            model.mark(hoveredCell.datax, hoveredCell.datay);
+            if (hoveredCell.isLabeled()) {
+              hoveredCell.marker.animationRadius.start();
+            } else {
+              hoveredCell.marker.animationRadius.stop();
+              hoveredCell.marker.animationRadius.reset();
+            }
+            break;
+        }
       }
     },
     handleMouseMove(mouseX, mouseY) {
@@ -80,6 +96,9 @@ const Mswpscreen = function(ctx, auxCvs, model, params) {
         } 
       }
 
+    },
+    setNavigationHandler(nav) {
+      navigationHandler = nav;
     }
   }
 }
