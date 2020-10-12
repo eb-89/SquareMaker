@@ -22,8 +22,8 @@ const View = function(cvs, auxCvs, model) {
 
   // Model options, default
   let modelCfg = {
-      dims: {x: 20, y: 10},
-      mines: 20
+      dims: {x: 9, y: 9},
+      mines: 10
   }
 
   let config = {

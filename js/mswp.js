@@ -56,7 +56,6 @@ const Mswp = function() {
     },
 
     init: function(mcfg) {
-      console.log(mcfg.dims);
       this.x = mcfg.dims.x;
       this.y = mcfg.dims.y;
       _state = _initializeState(mcfg.dims.x, mcfg.dims.y, mcfg.mines);

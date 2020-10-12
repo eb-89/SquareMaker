@@ -20,9 +20,9 @@ const jsonlog = function(log, obj) {
 
 function init() {
 
-  model = Model(16,16,30);
+  model = Model();
   // model.init();
-  model.start();
+  // model.start();
 
   cvs = document.getElementById("jscvs");
   cvs.addEventListener("mousemove", onMouseMove);

@@ -7,7 +7,7 @@ const Marker = function(x, y, width, height) {
   this.height = height;
   this.image = undefined;
   this.radius = this.width/2 -4
-  this.animationRadius = Animator.Linear(this.radius, Math.max(0,this.radius-3), 30, 1, true);
+  this.animationRadius = Animator.Linear(Math.max(0,this.radius-3), this.radius, 30, 1, true);
   this.type = "circle"
   this.color="green"
 }

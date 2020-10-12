@@ -86,7 +86,7 @@ Cell.prototype.update = function() {
 
 
 Cell.prototype.onMouseEnter = function() {
-  console.log("onMouseEnter at", this, "with anim", this.animationX);
+
   this.animationWidth.direction = 1;
   this.animationWidth.start(); 
 

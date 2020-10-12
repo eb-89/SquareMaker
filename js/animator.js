@@ -3,6 +3,14 @@ const Animation = function() {
   // this.draw = draw;
   this.start = function () {
     this.isRunning = true;
+
+    if (this.direction == 1 && this.t == 0) {
+      this.t++;
+    }
+
+    if (this.direction == -1 && this.t == this.duration + this.delay) {
+      this.t--;
+    }
   },
   this.stop = function () {
     this.isRunning = false;
@@ -36,25 +44,24 @@ const Linear = function(from, to, duration, times, repeat ) {
 }
 
 Linear.prototype = new Animation();
-console.log(Linear.prototype);
+
 Linear.prototype.update = function() {
   if (this.isRunning) {
 
     if (this.repeat) {
       if (this.direction == -1) {
         if (this.t == 0) {
-          this.t = this.duration + this.delay
+          this.t = this.duration + this.delay-1
         }
       } else {
         if (this.t == this.duration + this.delay) {
-          this.t = 0
+          this.t = 1
         }
       }
     }
 
-    this.t += this.direction;
-
-    if (0 <= this.t && this.t <= this.duration + this.delay) {
+    if (0 < this.t && this.t < this.duration + this.delay) {
+      this.t += this.direction;
       if (this.t >= this.delay) {
         this.value = this.from + (this.to - this.from)/this.duration*(this.t - this.delay);
       }

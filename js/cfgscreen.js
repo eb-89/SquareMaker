@@ -59,9 +59,6 @@ RadioButtonSelector.prototype.handleClick = function(x,y) {
 
 const cfg = function(modelCfg, viewCfg) {
 
-  console.log(modelCfg);
-  console.log(viewCfg);
-
   const back = {
     x: 0,
     y: 300,

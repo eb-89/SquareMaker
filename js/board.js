@@ -38,7 +38,6 @@ const Board = function(ctx, auxCvs, model, params) {
 
        _stateArray = model.getState();
        _cells = [];
-       console.log(_stateArray);
        
       for (let i = 0; i < model.x; i++) {
         for (let j = 0; j < model.y; j++) {
