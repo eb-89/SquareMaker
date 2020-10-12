@@ -19,18 +19,12 @@ Cell.prototype.hide = function() { this.hidden = true; }
 Cell.prototype.show = function() { this.hidden = false; }
 
 
-const Mswp = function(x, y, noOfMines) {
+const Mswp = function() {
 
   let _state;
-  const _x = x
-  const _y = y
-  let _noOfMines = noOfMines;
   let _running = false;
 
   return {
-
-    x,
-    y,
 
     handleAction: function(x,y) {
       
@@ -42,6 +36,7 @@ const Mswp = function(x, y, noOfMines) {
         }
 
         if (cell.isMine()) {
+          console.log("MINE");
             this.end();
         } else {
           _floodfill(_state, x,y);
@@ -61,6 +56,7 @@ const Mswp = function(x, y, noOfMines) {
     },
 
     init: function(mcfg) {
+      console.log(mcfg.dims);
       this.x = mcfg.dims.x;
       this.y = mcfg.dims.y;
       _state = _initializeState(mcfg.dims.x, mcfg.dims.y, mcfg.mines);

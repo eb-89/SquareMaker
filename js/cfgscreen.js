@@ -1,38 +1,5 @@
 
-/* 
-Btn ifc:
-  button {
-    draw()
-    select();
-    unselect();
-  }
-
-*/
-
-function Button(x,y,width,height, idx) {
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
-  this.name = name;
-  this.handler = undefined;
-  this.selected;
-  this.idx = idx;
-  this.color = "blue";
-}
-
-Button.prototype.onClick = function() {
-  this.handler(this.idx);
-};
-
-Button.prototype.draw = function(ctx) {
-  ctx.fillStyle = this.color;
-  ctx.fillRect(this.x, this.y, this.width, this.height);
-};
-
-Button.prototype.setOnClickHandler = function(handler) {
-  this.handler = handler;
-}
+import Button from "./button.js"
 
 function RadioButtonSelector(cfg, opts, x, y) {
   this.cfg = cfg;
@@ -84,13 +51,7 @@ RadioButtonSelector.prototype.select = function(num) {
 
 RadioButtonSelector.prototype.handleClick = function(x,y) {
   for (const btn of this.buttons) {
-    if (
-      x > btn.x 
-      && y > btn.y 
-      && (btn.x + btn.width > x)
-      && (btn.y + btn.height > y)
-    ) {
-      // console.log("true");
+    if ( btn.contains(x,y)) {
       btn.onClick();
     }
   }
@@ -98,7 +59,8 @@ RadioButtonSelector.prototype.handleClick = function(x,y) {
 
 const cfg = function(modelCfg, viewCfg) {
 
-  // console.log(cfg);
+  console.log(modelCfg);
+  console.log(viewCfg);
 
   const back = {
     x: 0,

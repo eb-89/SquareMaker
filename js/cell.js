@@ -20,6 +20,14 @@ const Cell = function(data, width, height, auxCvs) {
 
 }
 
+Cell.prototype.contains = function(x,y) {
+  // Implements Clickable
+  return  this.x < x 
+          && this.y < y 
+          && (this.x + this.width > x)
+          && (this.y + this.height > y)
+};
+
 Cell.prototype.isHidden = function()  { return this._data.isHidden() };
 Cell.prototype.getNeighbors = function()  {return this._data.getNeighbors()};
 Cell.prototype.isLabeled = function() {return this._data.isLabeled()};
@@ -78,7 +86,7 @@ Cell.prototype.update = function() {
 
 
 Cell.prototype.onMouseEnter = function() {
-
+  console.log("onMouseEnter at", this, "with anim", this.animationX);
   this.animationWidth.direction = 1;
   this.animationWidth.start(); 
 
