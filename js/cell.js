@@ -1,22 +1,22 @@
 import Marker from "./Marker.js"
 import Animator from "./animator.js"
 
-const Cell = function(data, width, height, auxCvs) {
-  this.auxCvs = auxCvs;
+const Cell = function(data,x,y,width,height) {
   this.width = width;
   this.height = height;
   this._data = data;
-  this.x = this._data.x*(this.width + 1);
-  this.y = this._data.y*(this.height + 1);
+  this.x = x;
+  this.y = y;
   this.marker = new Marker(this.x, this.y, this.width, this.height);
   this._enterListener = true;
-
   this.datax = this._data.x;
   this.datay = this._data.y;
-  this.animationWidth = Animator.Linear(this.width, this.width + 6, 10, 1, false) 
-  this.animationX = Animator.Linear(this.x, this.x - 3, 10, 1, false) 
-  this.animationY = Animator.Linear(this.y, this.y - 3, 10, 1, false) 
   this.colors = { hidden: "darkgray", shown: "lightgray" }
+
+  let tl = gsap.timeline({paused: true})
+  tl.to(this, {duration: 0.15, ease:"none", x: this.x -3, width: this.width + 6, y: this.y -3, height: this.height + 6});
+  
+  this.tl = tl;  
 
 }
 
@@ -40,11 +40,15 @@ Cell.prototype.setColorscheme = function(colors) {
 Cell.prototype.setMarker = function(cfg) {
   this.marker.type = cfg.type;
   this.marker.color = cfg.color;
+};
+Cell.prototype.setMarker = function(cfg) {
+  this.marker.type = cfg.type;
+  this.marker.color = cfg.color;
 }
 
 Cell.prototype.getColor = function(color) {return color};
 
-Cell.prototype.draw = function(ctx) {
+Cell.prototype.draw = function(ctx, auxCvs) {
 
 
   let neighbors;
@@ -63,51 +67,32 @@ Cell.prototype.draw = function(ctx) {
   ctx.fillRect(this.x, this.y, this.width, this.height);
 
   if (this.isHidden() && this.isLabeled()) {
-      this.marker.draw(ctx);
+      this.marker.draw(ctx, auxCvs);
   }
-
 
   if (neighbors > 0) {
-   ctx.drawImage(this.auxCvs, neighbors*50, 0, 50, 50, this.x, this.y, this.width, this.height);
+   ctx.drawImage(auxCvs, neighbors*50, 0, 50, 50, this.x, this.y, this.width, this.height);
   }
 };
-
-Cell.prototype.update = function() {
-  this.animationWidth.update();
-  this.animationX.update();
-  this.animationY.update();
-  this.width = this.animationWidth.value;
-  this.height = this.animationWidth.value;
-  this.x = this.animationX.value;
-  this.y = this.animationY.value;
-
-  this.marker.update();
-}
 
 
 Cell.prototype.onMouseEnter = function() {
 
-  this.animationWidth.direction = 1;
-  this.animationWidth.start(); 
+  // this.animationWidth.direction = 1;
+  // this.animationWidth.start(); 
 
-  this.animationX.direction = 1;
-  this.animationX.start();
+  // this.animationX.direction = 1;
+  // this.animationX.start();
 
-  this.animationY.direction = 1;
-  this.animationY.start();
+  // this.animationY.direction = 1;
+  // this.animationY.start();
+  // if (!this.tl.paused()) {
+    this.tl.play();
+  // }
 };
 
 Cell.prototype.onMouseExit = function() {
-
-  this.animationWidth.direction =  - 1;
-  this.animationWidth.start();  
-
-  this.animationX.direction =  - 1;
-  this.animationX.start();
-  
-  this.animationY.direction =  - 1;
-  this.animationY.start();
-
+    this.tl.reverse()
 };
 
 

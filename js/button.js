@@ -22,7 +22,7 @@ Button.prototype.onClick = function() {
   this.handler(this.idx);
 };
 
-Button.prototype.draw = function(ctx) {
+Button.prototype.draw = function(ctx,auxCvs) {
   ctx.fillStyle = this.color;
   ctx.fillRect(this.x, this.y, this.width, this.height);
 };

@@ -1,6 +1,5 @@
 
 const Animation = function() {
-  // this.draw = draw;
   this.start = function () {
     this.isRunning = true;
 
@@ -48,18 +47,6 @@ Linear.prototype = new Animation();
 Linear.prototype.update = function() {
   if (this.isRunning) {
 
-    if (this.repeat) {
-      if (this.direction == -1) {
-        if (this.t == 0) {
-          this.t = this.duration + this.delay-1
-        }
-      } else {
-        if (this.t == this.duration + this.delay) {
-          this.t = 1
-        }
-      }
-    }
-
     if (0 < this.t && this.t < this.duration + this.delay) {
       this.t += this.direction;
       if (this.t >= this.delay) {
@@ -67,6 +54,18 @@ Linear.prototype.update = function() {
       }
     } else {
       this.stop();
+    }
+  }
+
+  if (this.repeat) {
+    if (this.direction == -1) {
+      if (this.t == 0) {
+        this.t = this.duration + this.delay-1
+      }
+    } else {
+      if (this.t == this.duration + this.delay) {
+        this.t = 1
+      }
     }
   }
 

@@ -1,5 +1,7 @@
-const menu = function() {
+const menu = function(config) {
 
+  let ctx = config.cvs.getContext("2d"); 
+  let auxCvs = config.auxCvs; 
   const startBtn= {
     x: 100,
     y: 200,
@@ -17,7 +19,7 @@ const menu = function() {
 
   return {
     name: 'MENU',
-    render: function(ctx, auxCvs) {
+    render: function() {
       ctx.fillStyle = "lightblue";
 
       ctx.fillRect(startBtn.x,startBtn.y,startBtn.width,startBtn.height);

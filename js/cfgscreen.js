@@ -57,8 +57,10 @@ RadioButtonSelector.prototype.handleClick = function(x,y) {
   }
 }
 
-const cfg = function(modelCfg, viewCfg) {
+const cfg = function(config) {
 
+  const _ctx = config.cvs.getContext("2d");
+  const _auxCvs = config.auxCvs;
   const back = {
     x: 0,
     y: 300,
@@ -88,8 +90,8 @@ const cfg = function(modelCfg, viewCfg) {
     {  type: "square", color: "cyan" }
   ]
 
-  let _mcfg = modelCfg;
-  let _vcfg = viewCfg;
+  let _mcfg = config.mcfg;
+  let _vcfg = config.vcfg;
 
   const selector_color = new RadioButtonSelector(_vcfg.colorscheme, vopts, 50, 50);
   const selector_size = new RadioButtonSelector(_mcfg.dims, mopts, 50, 150);
@@ -97,11 +99,11 @@ const cfg = function(modelCfg, viewCfg) {
 
   return {
     name: 'CFG',
-    render: function(ctx, auxCvs) {
-      selector_color.draw(ctx);
-      selector_size.draw(ctx);
-      selector_minetype.draw(ctx);
-      back.draw(ctx);
+    render: function() {
+      selector_color.draw(_ctx);
+      selector_size.draw(_ctx);
+      selector_minetype.draw(_ctx);
+      back.draw(_ctx);
 
     },
     handleClick: function(evt) {

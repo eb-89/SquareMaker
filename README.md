@@ -1,1 +1,1 @@
-# SquareMaker
+# Squares

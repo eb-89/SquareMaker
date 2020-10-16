@@ -1,51 +1,52 @@
 import Cell from "./Cell.js"
-import Animator from "./animator.js"
+// import Animator from "./animator.js"
 
 
-const Board = function(ctx, auxCvs, model, params) {
+const Board = function(config, model) {
   
   let _stateArray;
 
-  // let width = Math.min(params.cellW, params.cellH);
-  let width = 300;
-
-
+  let width = config.vcfg.boardWidth;
 
   let _cells = [];
 
   let hoveredCell; 
-  let _ctx = ctx;
-  let _auxCvs = params.auxCvs;
+  let _ctx = config.cvs.getContext('2d');
+  let _auxCvs = config.auxCvs;
 
   return {
 
-    draw: function(ctx, auxCvs) {
+    render: function() {
       for (let c of _cells) {
         if (c === hoveredCell) { continue; }
-          c.update()
-          c.draw(ctx);
+          c.draw(_ctx, _auxCvs);
       }
 
       if (hoveredCell) {
-        hoveredCell.update();
-        hoveredCell.draw(ctx);
+        hoveredCell.draw(_ctx, _auxCvs);
       }
     },
     getModelData() {
 
-      const cellW = width/params.mcfg.dims.x;
+      const cellW = Math.round(width/config.mcfg.dims.x);
       const cellH = cellW;
 
        _stateArray = model.getState();
        _cells = [];
-       
+      
+      let pad = 4;
       for (let i = 0; i < model.x; i++) {
         for (let j = 0; j < model.y; j++) {
-          let c = new Cell(_stateArray[i][j], cellW, cellH, _auxCvs);
+
+          let x = i*(cellW +pad) + (config.cvs.width-width)/2 - Math.round(model.x*pad/2);
+          let y = j*(cellH +pad) + (config.cvs.width-width)/2 - 30;
+
+
+          let c = new Cell(_stateArray[i][j], x, y, cellW, cellH);
 
           // Eeeh refactor this...
-          c.setColorscheme(params.vcfg.colorscheme);
-          c.setMarker(params.vcfg.markertype);
+          c.setColorscheme(config.vcfg.colorscheme);
+          c.setMarker(config.vcfg.markertype);
           _cells.push(c)
         }
       }

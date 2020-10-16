@@ -10,26 +10,12 @@ let ctx;
 let view;
 let model;
 
-
-const jsonlog = function(log, obj) {
-  let out = JSON.stringify(obj, function(key, val) {
-    return (typeof val === 'function') ? '' + val : val;
-  });
-  console.log(log, out)
-} 
-
 function init() {
-
-  model = Model();
-  // model.init();
-  // model.start();
 
   cvs = document.getElementById("jscvs");
   cvs.addEventListener("mousemove", onMouseMove);
   cvs.addEventListener("mouseup", onMouseClick);
   cvs.addEventListener("contextmenu", (evt) => {evt.preventDefault(); } );
-
-
 
   // removes the double click select h1 problem.
   cvs.onselectstart = function () { return false; }
@@ -38,11 +24,30 @@ function init() {
   auxCvs.setAttribute("width", 1000);
   auxCvs.setAttribute("height", 1000);
 
-  console.log(auxCvs)
-  // let auxCxt = auxCvs.getContext('2d');
+  // View options, default
+  let viewCfg = {
+    colorscheme: {hidden: "red", shown: "yellow"},
+    markertype: { type: "circle", color: "green" },
+    boardWidth: 300
+  }
+
+  // Model options, default
+  let modelCfg = {
+      dims: {x: 9, y: 9},
+      mines: 10
+  }
+
+  let config = {
+    cvs: cvs,
+    auxCvs: auxCvs,
+    vcfg: viewCfg,
+    mcfg: modelCfg
+  }
+
+  model = Model();
 
   ctx = cvs.getContext('2d');
-  view = View(cvs, auxCvs, model);
+  view = View(config, model);
 
   start(view);
 }

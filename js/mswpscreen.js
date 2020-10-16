@@ -1,41 +1,34 @@
 import Cell from "./Cell.js";
-import Animator from "./animator.js";
+// import Animator from "./animator.js";
 import Board from "./board.js";
 import Button from "./button.js";
+import Bar from "./bar.js";
 
 
-const Mswpscreen = function(ctx, auxCvs, model, params) {
+const Mswpscreen = function(config, model) {
 
-  let board = Board(ctx, auxCvs, model, params)
+  let board = Board(config, model)
+  const topBar = Bar(config, model)
 
-  let back = new Button(300,300,100,20)
-
-  let navigationHandler;
+  let _ctx = config.cvs.getContext("2d");
+  let _auxCvs = config.auxCvs.getContext("2d");
 
   return {
 
-    render: function(ctx, auxCvs) {
-      board.draw(ctx, auxCvs);
-      back.draw(ctx);
+    render: function() {
+      topBar.draw(_ctx, _auxCvs);
+      board.render();
     },
     setNavigationHandler(nav) {
-      navigationHandler = nav;
+      topBar.setNavigationHandler(nav);
     },
     start() {
       board.getModelData();
       model.start();
     },
     handleClick(evt) {
-
-      const rect = evt.target.getBoundingClientRect();
-      const mouseX = evt.clientX - rect.x;
-      const mouseY = evt.clientY - rect.y;
-
       board.handleClick(evt)
-
-      if (back.contains(mouseX,mouseY)) {
-        navigationHandler("home");
-      }
+      topBar.handleClick(evt);
     },
     handleMouseMove(mouseX, mouseY) {
       board.handleMouseMove(mouseX,mouseY)

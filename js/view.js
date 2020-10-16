@@ -7,33 +7,13 @@ import Transition from "./transition.js"
 import Prerender from "./prerender.js"
 
 
-const View = function(cvs, auxCvs, model) {
+const View = function(config, model) {
 
-  let ctx = cvs.getContext("2d")
-  let auxCtx = auxCvs.getContext("2d");
+  let ctx = config.cvs.getContext("2d")
+  let auxCtx = config.auxCvs.getContext("2d");
 
-  const prerender = Prerender(auxCvs);
-
-  // View options, default
-  let viewCfg = {
-    colorscheme: {hidden: "red", shown: "yellow"},
-    markertype: { type: "circle", color: "green" }
-  }
-
-  // Model options, default
-  let modelCfg = {
-      dims: {x: 9, y: 9},
-      mines: 10
-  }
-
-  let config = {
-    auxCvs: prerender.auxCvs,
-    glyphs: prerender.numberGlyphs,
-    vcfg: viewCfg,
-    mcfg: modelCfg
-  }
-
-  let prerenderCfg = 0; 
+  const prerender = Prerender(config.auxCvs);
+  const transition = Transition(ctx);
 
   // navigation function
   const navigation = function (to) {
@@ -42,11 +22,13 @@ const View = function(cvs, auxCvs, model) {
         model.init(config.mcfg);
         mswpscreen.start();
 
-        transition.startTransition(function () {
+        transition.onTransition(function () {
           activeScreen = mswpscreen;
-        })
+        });
+        transition.startTransition();
       break;
       case 'restart':
+        model.init(config.mcfg);
         mswpscreen.start();
         activeScreen = mswpscreen;
       break;
@@ -60,18 +42,18 @@ const View = function(cvs, auxCvs, model) {
     }
   }
 
-  let menuscreen = Menuscreen();
+  let menuscreen = Menuscreen(config);
   menuscreen.setNavigationHandler(navigation)
 
-  let mswpscreen = Mswpscreen(ctx, auxCvs, model, config);
+  let mswpscreen = Mswpscreen(config, model);
   mswpscreen.setNavigationHandler(navigation)
 
-  let configscreen = Cfgscreen(config.mcfg, config.vcfg);
+  let configscreen = Cfgscreen(config);
   configscreen.setNavigationHandler(navigation)
 
   let activeScreen = menuscreen;
 
-  let transition = Transition(ctx);
+  let count = 0;
 
   return {
     handleClick: function(evt) {
@@ -90,16 +72,15 @@ const View = function(cvs, auxCvs, model) {
     render: function() {
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-      activeScreen.render(ctx, auxCvs);
+      activeScreen.render();
 
-      if (transition.isRunning) {
-        transition.update();
+      if (transition.isRunning()) {
+        // transition.update();
         transition.render(ctx);
       }
 
     }
   }
 }
-
 
 export default View;
