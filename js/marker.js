@@ -1,44 +1,54 @@
-import Animator from "./animator.js"
-
-const Marker = function(x, y, width, height) {
+const Marker = function(x, y, width, height, color) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.image = undefined;
-  this.radius = this.width/2 -4
-  this.animationRadius = Animator.Linear(Math.max(0,this.radius-3), this.radius, 30, 1, true);
-  this.type = "circle"
-  this.color="green"
+  this.color= color;
+  this.type;
 }
 
 
 Marker.prototype.draw = function(ctx) {
   ctx.strokeStyle = this.color;
-  ctx.lineWidth = 2;
-  ctx.beginPath();
+  ctx.fillStyle = this.color;
+
+  const x = this.x;
+  const y = this.y;
+  const w = this.width;
+  const h = this.height;
+  
   switch (this.type) {
-    case "circle": 
-      ctx.arc(this.x + this.width/2, this.y + this.height/2, this.radius, 0, 2*Math.PI);
+    case "flag": 
+
+      ctx.beginPath();
+      ctx.moveTo(x + w/6 ,y+h);
+      ctx.lineTo(x + w - w/6 , y+h)
+      ctx.lineTo(x + w/2, y + h*(4/5));
+      ctx.fill();
+
+      ctx.lineWidth=2
+      ctx.beginPath();
+      ctx.moveTo(x + w/2, y+h - 3);
+      ctx.lineTo(x + w/2, y+3);
+      ctx.closePath();
+      ctx.stroke()
+
+      ctx.beginPath();
+      ctx.rect(x + w/2, y + 3, w/3, h/6);
+      ctx.closePath();
+      ctx.fill();
+
       break;
-    case "square":
-      ctx.strokeStyle = this.color;
-      ctx.rect(this.x+2, this.y+2, this.width-4, this.height-4);
+    case "triangle":
+
+      ctx.beginPath();
+      ctx.moveTo(x + 3 ,y+h);
+      ctx.lineTo(x + w - 3 , y+h)
+      ctx.lineTo(x + w/2, y + h/5);
+      ctx.fill();
+
       break;
   }
-  ctx.stroke();
 };
-
-Marker.prototype.update = function() { 
-  let time = this.animationRadius.update();
-  if (time == 29 && this.animationRadius.direction == 1) {
-    this.animationRadius.revert();
-  }
-  if (time == 1 && this.animationRadius.direction == -1) {
-    this.animationRadius.revert();
-  }
-
-  this.radius = this.animationRadius.value;
-}
 
 export default Marker;

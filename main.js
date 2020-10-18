@@ -27,7 +27,7 @@ function init() {
   // View options, default
   let viewCfg = {
     colorscheme: {hidden: "red", shown: "yellow"},
-    markertype: { type: "circle", color: "green" },
+    markertype: { type: "flag", color: "green" },
     boardWidth: 300
   }
 

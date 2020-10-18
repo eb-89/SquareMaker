@@ -28,6 +28,7 @@ const View = function(config, model) {
         transition.startTransition();
       break;
       case 'restart':
+        model.end()
         model.init(config.mcfg);
         mswpscreen.start();
         activeScreen = mswpscreen;

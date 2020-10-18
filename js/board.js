@@ -67,12 +67,6 @@ const Board = function(config, model) {
             break;
           case 2:
             model.mark(hoveredCell.datax, hoveredCell.datay);
-            if (hoveredCell.isLabeled()) {
-              hoveredCell.marker.animationRadius.start();
-            } else {
-              hoveredCell.marker.animationRadius.stop();
-              hoveredCell.marker.animationRadius.reset();
-            }
             break;
         }
       }

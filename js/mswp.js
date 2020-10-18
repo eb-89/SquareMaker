@@ -24,10 +24,29 @@ const Mswp = function() {
   let _state;
   let _running = false;
 
+  let seconds =0;
+  let minutes = 0;
+  let tick;
+
+  let firstClick = true;
+  const handleFirstClick = function () {
+    if (firstClick) {
+      firstClick = false;
+      tick = setInterval(() => {
+        seconds++;
+
+        if (seconds == 60) {
+          seconds = 0;
+          minutes++;
+        }
+      }, 200)
+    }
+  }
+
   return {
 
     handleAction: function(x,y) {
-      
+      handleFirstClick();
       if (this.isRunning()) {
         let cell = _state[x][y];
 
@@ -45,6 +64,7 @@ const Mswp = function() {
     },
 
     mark: function(x,y) {
+      handleFirstClick();
       if (_state[x][y].isHidden()) {
           _state[x][y].labeled = !_state[x][y].labeled;
       }
@@ -67,10 +87,20 @@ const Mswp = function() {
 
     end: function () {
       _running = false;
+      clearInterval(tick);
+      seconds = 0;
+      minutes = 0;
+      firstClick = true;
     },
 
     getState: function getState() {
       return _state;
+    },
+    getSeconds: function () {
+      return seconds;
+    },
+    getMinutes: function() {
+      return minutes;
     }
   }
 }

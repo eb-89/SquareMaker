@@ -1,17 +1,18 @@
 import Cell from "./Cell.js";
 // import Animator from "./animator.js";
 import Board from "./board.js";
-import Button from "./button.js";
+// import Button from "./button.js";
 import Bar from "./bar.js";
+import { Timer } from "./timer.js";
 
 
 const Mswpscreen = function(config, model) {
 
-  let board = Board(config, model)
-  const topBar = Bar(config, model)
+  const board = Board(config, model);
+  const topBar = Bar(config, model);
 
-  let _ctx = config.cvs.getContext("2d");
-  let _auxCvs = config.auxCvs.getContext("2d");
+  const _ctx = config.cvs.getContext("2d");
+  const _auxCvs = config.auxCvs.getContext("2d");
 
   return {
 

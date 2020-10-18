@@ -1,5 +1,5 @@
 
-import Button from "./button.js"
+import { Button } from "./button.js"
 
 function RadioButtonSelector(cfg, opts, x, y) {
   this.cfg = cfg;
@@ -86,8 +86,8 @@ const cfg = function(config) {
   ]
 
   let markeropts = [
-    { type: "circle", color: "pink" },
-    {  type: "square", color: "cyan" }
+    { type: "flag", color: "lightgreen" },
+    {  type: "triangle", color: "brown" }
   ]
 
   let _mcfg = config.mcfg;

@@ -7,7 +7,7 @@ const Cell = function(data,x,y,width,height) {
   this._data = data;
   this.x = x;
   this.y = y;
-  this.marker = new Marker(this.x, this.y, this.width, this.height);
+  this.marker = new Marker(this.x + 2, this.y + 2, this.width - 4, this.height - 4);
   this._enterListener = true;
   this.datax = this._data.x;
   this.datay = this._data.y;
@@ -38,14 +38,10 @@ Cell.prototype.setColorscheme = function(colors) {
   }
 };
 Cell.prototype.setMarker = function(cfg) {
+
   this.marker.type = cfg.type;
   this.marker.color = cfg.color;
 };
-Cell.prototype.setMarker = function(cfg) {
-  this.marker.type = cfg.type;
-  this.marker.color = cfg.color;
-}
-
 Cell.prototype.getColor = function(color) {return color};
 
 Cell.prototype.draw = function(ctx, auxCvs) {
@@ -77,18 +73,7 @@ Cell.prototype.draw = function(ctx, auxCvs) {
 
 
 Cell.prototype.onMouseEnter = function() {
-
-  // this.animationWidth.direction = 1;
-  // this.animationWidth.start(); 
-
-  // this.animationX.direction = 1;
-  // this.animationX.start();
-
-  // this.animationY.direction = 1;
-  // this.animationY.start();
-  // if (!this.tl.paused()) {
     this.tl.play();
-  // }
 };
 
 Cell.prototype.onMouseExit = function() {
