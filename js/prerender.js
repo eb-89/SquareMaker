@@ -1,12 +1,10 @@
   // prerender
 
+import { Canvases } from "./canvases.js"
+const prerender = function() {
 
-const prerender = function(auxCvs) {
-
-  let _cvs = auxCvs;
-
-  let auxCtx = auxCvs.getContext('2d'); 
-
+  let auxCvs = Canvases.getAuxCanvas();
+  let auxCtx = Canvases.getAuxCanvas().getContext('2d'); 
 
   auxCtx.textBaseline = "middle";
   let ts = 30;

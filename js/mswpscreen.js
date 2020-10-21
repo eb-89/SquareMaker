@@ -1,9 +1,11 @@
-import Cell from "./Cell.js";
+// import {Cell} from "./Cell.js";
 // import Animator from "./animator.js";
 import Board from "./board.js";
 // import Button from "./button.js";
 import Bar from "./bar.js";
 import { Timer } from "./timer.js";
+import { Canvases } from "./canvases.js"
+
 
 
 const Mswpscreen = function(config, model) {
@@ -11,13 +13,13 @@ const Mswpscreen = function(config, model) {
   const board = Board(config, model);
   const topBar = Bar(config, model);
 
-  const _ctx = config.cvs.getContext("2d");
-  const _auxCvs = config.auxCvs.getContext("2d");
+  const ctx = Canvases.getCanvas().getContext('2d')
+  const auxCvs = Canvases.getAuxCanvas(); 
 
   return {
 
     render: function() {
-      topBar.draw(_ctx, _auxCvs);
+      topBar.draw();
       board.render();
     },
     setNavigationHandler(nav) {

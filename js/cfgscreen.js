@@ -1,5 +1,6 @@
 
 import { Button } from "./button.js"
+import { Canvases } from "./canvases.js"
 
 function RadioButtonSelector(cfg, opts, x, y) {
   this.cfg = cfg;
@@ -59,8 +60,9 @@ RadioButtonSelector.prototype.handleClick = function(x,y) {
 
 const cfg = function(config) {
 
-  const _ctx = config.cvs.getContext("2d");
-  const _auxCvs = config.auxCvs;
+  const ctx = Canvases.getCanvas().getContext('2d')
+  const auxCvs = Canvases.getAuxCanvas(); 
+
   const back = {
     x: 0,
     y: 300,
@@ -100,10 +102,10 @@ const cfg = function(config) {
   return {
     name: 'CFG',
     render: function() {
-      selector_color.draw(_ctx);
-      selector_size.draw(_ctx);
-      selector_minetype.draw(_ctx);
-      back.draw(_ctx);
+      selector_color.draw(ctx);
+      selector_size.draw(ctx);
+      selector_minetype.draw(ctx);
+      back.draw(ctx);
 
     },
     handleClick: function(evt) {
@@ -116,6 +118,7 @@ const cfg = function(config) {
       selector_size.handleClick(x,y);
       selector_minetype.handleClick(x,y)
       
+      this.render();
       if (
         x > back.x 
         && y > back.y 
@@ -124,6 +127,8 @@ const cfg = function(config) {
       ) {
         navigationHandler("home");
       }
+
+
 
     },
 

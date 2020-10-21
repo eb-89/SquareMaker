@@ -1,7 +1,12 @@
+
+import { Canvases } from "./canvases.js"
 const menu = function(config) {
 
-  let ctx = config.cvs.getContext("2d"); 
-  let auxCvs = config.auxCvs; 
+  let ctx = Canvases.getCanvas().getContext("2d"); 
+
+  let cvsWidth = Canvases.getCanvas().width;
+  let auxCvs = Canvases.getAuxCanvas(); 
+
   const startBtn= {
     x: 100,
     y: 200,
@@ -18,7 +23,6 @@ const menu = function(config) {
   let navigationHandler;
 
   return {
-    name: 'MENU',
     render: function() {
       ctx.fillStyle = "lightblue";
 
@@ -30,7 +34,7 @@ const menu = function(config) {
       ctx.drawImage(auxCvs, 0, 50, 100, 50, cfgBtn.x + (cfgBtn.width - 100)/2, cfgBtn.y, 100, 50);
 
       // Title
-      ctx.drawImage(auxCvs, 0, 200, 150, 50, (ctx.canvas.width-150)/2, 20, 150, 50);
+      ctx.drawImage(auxCvs, 0, 200, 150, 50, (cvsWidth-150)/2, 20, 150, 50);
     },
     handleClick: function(evt ) {
       const rect = evt.target.getBoundingClientRect();

@@ -3,16 +3,15 @@ import View from "./js/view.js"
 
 // Right now called model
 import Model from "./js//mswp.js"
+import { Canvases } from "./js/canvases.js"
 
 window.onload = init
-let cvs;
-let ctx;
 let view;
 let model;
 
 function init() {
 
-  cvs = document.getElementById("jscvs");
+  let cvs = document.getElementById("jscvs");
   cvs.addEventListener("mousemove", onMouseMove);
   cvs.addEventListener("mouseup", onMouseClick);
   cvs.addEventListener("contextmenu", (evt) => {evt.preventDefault(); } );
@@ -26,30 +25,29 @@ function init() {
 
   // View options, default
   let viewCfg = {
-    colorscheme: {hidden: "red", shown: "yellow"},
+    cellSize: 17,
+    colorscheme: {hidden: "red", shown: "darkgray"},
     markertype: { type: "flag", color: "green" },
-    boardWidth: 300
   }
 
   // Model options, default
   let modelCfg = {
-      dims: {x: 9, y: 9},
+      dims: {x: 30, y: 16},
       mines: 10
   }
 
+  Canvases.setCanvas(cvs);
+  Canvases.setAuxCanvas(auxCvs);
+
   let config = {
-    cvs: cvs,
-    auxCvs: auxCvs,
     vcfg: viewCfg,
     mcfg: modelCfg
   }
 
   model = Model();
-
-  ctx = cvs.getContext('2d');
   view = View(config, model);
 
-  start(view);
+  view.render();
 }
 
 function onMouseMove(evt) {
@@ -71,17 +69,6 @@ function onMouseClick(evt) {
       break;
   }
 }
-
-
-function start(view) {
-  (function loop(timestamp) {
-
-    view.render(timestamp);
-    window.requestAnimationFrame(loop)
-  }
-  )();
-}
-
 
 
 

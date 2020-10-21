@@ -24,16 +24,21 @@ const Mswp = function() {
   let _state;
   let _running = false;
 
-  let seconds =0;
+  let seconds = 0;
   let minutes = 0;
   let tick;
+  let stateChange;
 
   let firstClick = true;
+  let minesLeft;
+
   const handleFirstClick = function () {
     if (firstClick) {
       firstClick = false;
       tick = setInterval(() => {
         seconds++;
+
+        if (stateChange) { stateChange() }
 
         if (seconds == 60) {
           seconds = 0;
@@ -59,6 +64,7 @@ const Mswp = function() {
             this.end();
         } else {
           _floodfill(_state, x,y);
+          if (stateChange) { stateChange() }
         }
       }
     },
@@ -67,6 +73,9 @@ const Mswp = function() {
       handleFirstClick();
       if (_state[x][y].isHidden()) {
           _state[x][y].labeled = !_state[x][y].labeled;
+          _state[x][y].labeled ? minesLeft-- : minesLeft++;
+          
+          if (stateChange) { stateChange() }
       }
     },
 
@@ -79,6 +88,10 @@ const Mswp = function() {
       this.x = mcfg.dims.x;
       this.y = mcfg.dims.y;
       _state = _initializeState(mcfg.dims.x, mcfg.dims.y, mcfg.mines);
+      minesLeft = mcfg.mines;
+      seconds = 0;
+      minutes = 0;
+      if (stateChange) { stateChange() }
     },
 
     start: function () {
@@ -88,19 +101,40 @@ const Mswp = function() {
     end: function () {
       _running = false;
       clearInterval(tick);
-      seconds = 0;
-      minutes = 0;
+
       firstClick = true;
     },
 
-    getState: function getState() {
+    getState: function () {
       return _state;
     },
-    getSeconds: function () {
+    setOnStateChange(cb) {
+      stateChange = cb;
+    },
+
+    getSeconds() {
       return seconds;
     },
-    getMinutes: function() {
+
+    getMinutes() {
       return minutes;
+    },
+    getMinesLeft() {
+      if (minesLeft > 0) {
+        return minesLeft
+      } else {
+        return 0
+      }
+    },
+
+    reveal: function () {
+      for (let row of _state) {
+        for (let cell of row) { 
+          if (cell.isMine() || cell.isLabeled())
+          cell.show();
+        }
+      }
+      if (stateChange) { stateChange() }
     }
   }
 }

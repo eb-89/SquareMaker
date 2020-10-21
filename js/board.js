@@ -1,5 +1,6 @@
-import Cell from "./Cell.js"
+import {Cell} from "./Cell.js"
 // import Animator from "./animator.js"
+import { Canvases } from "./canvases.js"
 
 
 const Board = function(config, model) {
@@ -11,40 +12,42 @@ const Board = function(config, model) {
   let _cells = [];
 
   let hoveredCell; 
-  let _ctx = config.cvs.getContext('2d');
-  let _auxCvs = config.auxCvs;
+  let ctx = Canvases.getCanvas().getContext("2d")
+  let auxCtx = Canvases.getAuxCanvas()
+  let ctxWidth = Canvases.getCanvas().width;
 
   return {
 
     render: function() {
       for (let c of _cells) {
         if (c === hoveredCell) { continue; }
-          c.draw(_ctx, _auxCvs);
+          c.draw();
       }
 
       if (hoveredCell) {
-        hoveredCell.draw(_ctx, _auxCvs);
+        hoveredCell.draw();
       }
     },
     getModelData() {
 
-      const cellW = Math.round(width/config.mcfg.dims.x);
+      const cellW = config.vcfg.cellSize;
       const cellH = cellW;
 
        _stateArray = model.getState();
        _cells = [];
       
       let pad = 4;
+
+      let bx = Math.round((ctxWidth - model.x*(config.vcfg.cellSize + pad))/2);
+      let by = 100
       for (let i = 0; i < model.x; i++) {
         for (let j = 0; j < model.y; j++) {
 
-          let x = i*(cellW +pad) + (config.cvs.width-width)/2 - Math.round(model.x*pad/2);
-          let y = j*(cellH +pad) + (config.cvs.width-width)/2 - 30;
-
+          let x = bx + i*(cellW +pad);
+          let y = by + j*(cellH +pad);
 
           let c = new Cell(_stateArray[i][j], x, y, cellW, cellH);
 
-          // Eeeh refactor this...
           c.setColorscheme(config.vcfg.colorscheme);
           c.setMarker(config.vcfg.markertype);
           _cells.push(c)
@@ -62,7 +65,7 @@ const Board = function(config, model) {
           case 0: 
             model.handleAction(hoveredCell.datax, hoveredCell.datay);
             if (!model.isRunning()) {
-              console.log("DEATH");
+              model.reveal();
             }
             break;
           case 2:

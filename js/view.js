@@ -1,44 +1,54 @@
 
-import Menuscreen from "./menuscreen.js"
+import Menuscreen from "./menu.js"
 import Mswpscreen from "./mswpscreen.js"
 import Cfgscreen from "./cfgscreen.js"
 
 import Transition from "./transition.js"
 import Prerender from "./prerender.js"
+import { Canvases } from "./canvases.js"
 
 
 const View = function(config, model) {
 
-  let ctx = config.cvs.getContext("2d")
-  let auxCtx = config.auxCvs.getContext("2d");
+  let ctx = Canvases.getCanvas().getContext("2d")
+  let auxCvs = Canvases.getAuxCanvas();
 
-  const prerender = Prerender(config.auxCvs);
+  const prerender = Prerender(auxCvs);
   const transition = Transition(ctx);
 
   // navigation function
   const navigation = function (to) {
     switch(to) {
       case 'start':
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         model.init(config.mcfg);
         mswpscreen.start();
 
         transition.onTransition(function () {
           activeScreen = mswpscreen;
+          ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+          activeScreen.render();
         });
         transition.startTransition();
       break;
       case 'restart':
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         model.end()
         model.init(config.mcfg);
         mswpscreen.start();
         activeScreen = mswpscreen;
+        activeScreen.render();
       break;
       case 'home':
         model.end();
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         activeScreen = menuscreen;
+        menuscreen.render();
       break;
       case 'config':
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         activeScreen = configscreen;
+        activeScreen.render();
         break;
     }
   }
@@ -54,7 +64,10 @@ const View = function(config, model) {
 
   let activeScreen = menuscreen;
 
-  let count = 0;
+  model.setOnStateChange(function () {
+    activeScreen.render();
+  })
+
 
   return {
     handleClick: function(evt) {
@@ -71,8 +84,6 @@ const View = function(config, model) {
     },
 
     render: function() {
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
       activeScreen.render();
 
       if (transition.isRunning()) {

@@ -1,7 +1,4 @@
 
-import Animator from "./animator.js"
-
-
 const Transition = function (ctx) {
   
   let boxes = [];
@@ -75,22 +72,33 @@ const Transition = function (ctx) {
     onTransition()
   }, null, "+=0.5");
 
-  let startEnd = 1;
 
-  return {
-    render(ctx) {
+  tl.call(() => {
+    gsap.ticker.remove(render);
+  })
 
+  function render() {
+    console.log("render")
       for (let box of boxes) {
           box.draw(ctx);
       }
+  }
 
-    },
+  return {
+    // render(ctx) {
+
+      // for (let box of boxes) {
+          // box.draw(ctx);
+      // }
+
+    // },
 
     onTransition(cb) {
       onTransition = cb;
     },
 
     startTransition() {
+      gsap.ticker.add(render);
 
       tl.restart();
       tl.play();

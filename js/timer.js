@@ -1,3 +1,5 @@
+import { Canvases } from "./canvases.js";
+
 export function Timer(x,y, width, height) {
   this.x = x;
   this.y = y;
@@ -8,16 +10,36 @@ export function Timer(x,y, width, height) {
 }
 
 
-Timer.prototype.draw = function(ctx, auxCvs) {
-  let secfirst = Math.floor(this.seconds/10);
-  let minfirst = Math.floor(this.minutes/10);
-  let seclast = this.seconds % 10;
-  let minlast = this.minutes % 10;
+Timer.prototype.draw = function() {
 
-  ctx.drawImage(auxCvs, minfirst  *50, 0, 50, 50, this.x, this.y, this.width, this.height);
-  ctx.drawImage(auxCvs, minlast  *50, 0, 50, 50, this.x +50, this.y, this.width, this.height);
-  ctx.drawImage(auxCvs, secfirst  *50, 0, 50, 50, this.x+100, this.y, this.width, this.height);
-  ctx.drawImage(auxCvs, seclast  *50, 0, 50, 50, this.x +150, this.y, this.width, this.height);
+
+  const ctx = Canvases.getCanvas().getContext("2d"); 
+  const auxCvs = Canvases.getAuxCanvas()
+
+  ctx.clearRect(this.x, this.y, this.width,this.height);
+  ctx.fillRect(this.x, this.y, this.width,this.height);
+
+  ctx.fillStyle="white";
+  ctx.strokeStyle="white";
+  ctx.beginPath()
+  ctx.moveTo(this.x + this.width/2, this.y);
+  ctx.lineTo(this.x + this.width/2, this.y + this.height);
+  ctx.closePath();
+  ctx.strokeWidth = 4;
+  ctx.stroke()
+
+
+
+
+  for (let i = 0; i<this.seconds;i++) {
+    let rightshift = this.x + this.width/2 + 10 +  (i % 10) *6;
+    ctx.fillRect(rightshift, this.y + Math.floor(i/10)*6, 4, 4);
+  }
+  for (let i = 0; i<this.minutes;i++) {
+    let leftshift = this.x + this.width/2 - 10 -  (i % 10) *6;
+    ctx.fillRect(leftshift, this.y + Math.floor(i/10)*6, 4, 4);
+  }
+
 }
 
 Timer.prototype.setSeconds = function (secs) {
