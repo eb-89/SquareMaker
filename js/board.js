@@ -48,8 +48,8 @@ const Board = function(config, model) {
 
           let c = new Cell(_stateArray[i][j], x, y, cellW, cellH);
 
-          c.setColorscheme(config.vcfg.colorscheme);
-          c.setMarker(config.vcfg.markertype);
+          // c.setColorscheme(config.vcfg.colorscheme);
+          // c.setMarker(config.vcfg.markertype);
           _cells.push(c)
         }
       }

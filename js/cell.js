@@ -10,23 +10,25 @@ export const Cell = function(data, x,y, width,height) {
   this._enterListener = true;
   this.datax = this._data.x;
   this.datay = this._data.y;
-  this.colors = { hidden: "yellow", shown: "yellow" }
+  this.colors = { hidden: "blue", shown: "magenta" }
 
-  let tl = gsap.timeline({paused: true})
-  tl.to(
+  const draw = this.draw.bind(this);
+
+  this.tl = gsap.timeline({paused: true});  
+  this.tl.to(
     this, 
     {
       duration: 0.15, 
       ease:"none", 
-      onUpdate: this.draw.bind(this), 
+      onUpdate: () => {this.draw()},
       x: this.x -3, 
       width: this.width + 6, 
       y: this.y -3, 
-      height: this.height + 6
+      height: this.height + 6,
+      callbackScope: this
     }
+
   );
-  
-  this.tl = tl;  
 
 }
 
@@ -50,12 +52,17 @@ Cell.prototype.setColorscheme = function(colors) {
 
 Cell.prototype.drawCell = function(ctx, auxCvs) {
 
-  ctx.fillStyle = "brown";
-  ctx.fill();
   let neighbors = this.getNeighbors();
+  let blueshade = Math.round(1+ (255/8)*neighbors).toString(16);
+  // console.log(blueshade);
+  ctx.fillStyle = `#0000${blueshade}`;
+  // ctx.fillStyle = `magenta`;
+  // console.log(" fill is  ",ctx.fillStyle, "at", this)
+  ctx.fill();
   if (neighbors > 0) {
    ctx.drawImage(auxCvs, neighbors*50, 0, 50, 50, this.x, this.y, this.width, this.height);
   }
+
 }
 
 Cell.prototype.drawFrame = function(ctx) {
@@ -121,7 +128,7 @@ Cell.prototype.drawMine = function(ctx) {
 }
 
 Cell.prototype.draw = function() {
-  // console.log("still drawing");
+  // console.log("still drawing", this);
   const ctx = Canvases.getCanvas().getContext('2d');
   const auxCvs = Canvases.getAuxCanvas();
 
@@ -131,8 +138,8 @@ Cell.prototype.draw = function() {
   let neighbors;
 
   if (this.isHidden()) {
-    ctx.fillStyle ="yellow";
-    ctx.fill();
+      ctx.fillStyle = this.colors.hidden;
+      ctx.fill();
     if (this.isLabeled()) {
       this.drawMarker(ctx);
     }
