@@ -10,7 +10,7 @@ export const Cell = function(data, x,y, width,height) {
   this._enterListener = true;
   this.datax = this._data.x;
   this.datay = this._data.y;
-  this.colors = { hidden: "blue", shown: "magenta" }
+  this.colors = { hidden: "brown", shown: "magenta" }
 
   const draw = this.draw.bind(this);
 
@@ -24,8 +24,7 @@ export const Cell = function(data, x,y, width,height) {
       x: this.x -3, 
       width: this.width + 6, 
       y: this.y -3, 
-      height: this.height + 6,
-      callbackScope: this
+      height: this.height + 6
     }
 
   );
@@ -53,11 +52,11 @@ Cell.prototype.setColorscheme = function(colors) {
 Cell.prototype.drawCell = function(ctx, auxCvs) {
 
   let neighbors = this.getNeighbors();
-  let blueshade = Math.round(1+ (255/8)*neighbors).toString(16);
-  // console.log(blueshade);
-  ctx.fillStyle = `#0000${blueshade}`;
-  // ctx.fillStyle = `magenta`;
-  // console.log(" fill is  ",ctx.fillStyle, "at", this)
+  let blueshade = (255 - Math.round((255/8)*neighbors)).toString(16);
+  if (blueshade.length == 1) {
+    blueshade = "0"+blueshade;
+  }
+  ctx.fillStyle = `#${blueshade}${blueshade}FF`;
   ctx.fill();
   if (neighbors > 0) {
    ctx.drawImage(auxCvs, neighbors*50, 0, 50, 50, this.x, this.y, this.width, this.height);

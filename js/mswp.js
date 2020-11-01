@@ -44,7 +44,7 @@ const Mswp = function() {
           seconds = 0;
           minutes++;
         }
-      }, 200)
+      }, 1000)
     }
   }
 

@@ -21,7 +21,7 @@ const prerender = function() {
     }
 
     text = `${i}`;
-    auxCtx.fillStyle = "white";
+    auxCtx.fillStyle = "black";
     auxCtx.setTransform(1, 0, 0, 1, o.x, 0);
     auxCtx.fillText(text, (o.width - auxCtx.measureText(text).width)/2, o.height/2);
     numbers.push(o);
