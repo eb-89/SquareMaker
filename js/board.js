@@ -21,7 +21,13 @@ const Board = function(config, model) {
     render: function() {
       for (let c of _cells) {
         if (c === hoveredCell) { continue; }
-          c.draw();
+
+          if(model.isRunning()) {
+            c.draw();
+          } else {
+            c.draw();
+          }
+
       }
 
       if (hoveredCell) {

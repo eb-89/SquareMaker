@@ -24,6 +24,9 @@ const Mswp = function() {
   let _state;
   let _running = false;
 
+  let won = false;
+  let lost = false;
+
   let seconds = 0;
   let minutes = 0;
   let tick;
@@ -48,6 +51,23 @@ const Mswp = function() {
     }
   }
 
+  const gameIsWon = function() {
+    for (let row of _state) {
+      for (let cell of row) {
+
+        if (!cell.isMine() && cell.isHidden()) {
+          return false;
+        }
+
+        if (cell.isMine() && !cell.isLabeled()) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
   return {
 
     handleAction: function(x,y) {
@@ -60,11 +80,14 @@ const Mswp = function() {
         }
 
         if (cell.isMine()) {
-          console.log("MINE");
             this.end();
         } else {
           _floodfill(_state, x,y);
           if (stateChange) { stateChange() }
+        }
+
+        if (gameIsWon()) {
+            console.log("game is won")
         }
       }
     },
@@ -76,6 +99,9 @@ const Mswp = function() {
           _state[x][y].labeled ? minesLeft-- : minesLeft++;
           
           if (stateChange) { stateChange() }
+      }
+      if (gameIsWon()) {
+          console.log("game is won2")
       }
     },
 
@@ -100,6 +126,7 @@ const Mswp = function() {
 
     end: function () {
       _running = false;
+      lost = true;
       clearInterval(tick);
 
       firstClick = true;
