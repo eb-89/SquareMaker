@@ -30,7 +30,7 @@ const Mswp = function() {
   let seconds = 0;
   let minutes = 0;
   let tick;
-  let stateChange;
+  let onTick;
 
   let firstClick = true;
   let minesLeft;
@@ -41,7 +41,7 @@ const Mswp = function() {
       tick = setInterval(() => {
         seconds++;
 
-        if (stateChange) { stateChange() }
+        if (onTick) { onTick() }
 
         if (seconds == 60) {
           seconds = 0;
@@ -64,11 +64,14 @@ const Mswp = function() {
         }
       }
     }
-
     return true;
   }
 
   return {
+
+    gameIsWon: function () {
+      return won;
+    },
 
     handleAction: function(x,y) {
       handleFirstClick();
@@ -83,11 +86,11 @@ const Mswp = function() {
             this.end();
         } else {
           _floodfill(_state, x,y);
-          if (stateChange) { stateChange() }
         }
 
         if (gameIsWon()) {
-            console.log("game is won")
+           won = true;
+           this.end()
         }
       }
     },
@@ -98,10 +101,11 @@ const Mswp = function() {
           _state[x][y].labeled = !_state[x][y].labeled;
           _state[x][y].labeled ? minesLeft-- : minesLeft++;
           
-          if (stateChange) { stateChange() }
+          
       }
       if (gameIsWon()) {
-          console.log("game is won2")
+          won =true;
+          this.end();
       }
     },
 
@@ -117,7 +121,9 @@ const Mswp = function() {
       minesLeft = mcfg.mines;
       seconds = 0;
       minutes = 0;
-      if (stateChange) { stateChange() }
+      won = false;
+      lost = false;
+      
     },
 
     start: function () {
@@ -128,6 +134,7 @@ const Mswp = function() {
       _running = false;
       lost = true;
       clearInterval(tick);
+      this.reveal();
 
       firstClick = true;
     },
@@ -135,8 +142,8 @@ const Mswp = function() {
     getState: function () {
       return _state;
     },
-    setOnStateChange(cb) {
-      stateChange = cb;
+    setOnTick(cb) {
+      onTick = cb;
     },
 
     getSeconds() {
@@ -161,7 +168,7 @@ const Mswp = function() {
           cell.show();
         }
       }
-      if (stateChange) { stateChange() }
+      
     }
   }
 }

@@ -12,7 +12,7 @@ export const Cell = function(data, x,y, width,height) {
   this.datay = this._data.y;
   this.colors = { hidden: "brown", shown: "magenta" }
 
-  const draw = this.draw.bind(this);
+  // const draw = this.draw.bind(this);
 
   this.tl = gsap.timeline({paused: true});  
   this.tl.to(
@@ -127,7 +127,7 @@ Cell.prototype.drawMine = function(ctx) {
 }
 
 Cell.prototype.draw = function() {
-  // console.log("still drawing", this);
+  // console.log("still drawing", this.colors.hidden);
   const ctx = Canvases.getCanvas().getContext('2d');
   const auxCvs = Canvases.getAuxCanvas();
 
@@ -147,7 +147,7 @@ Cell.prototype.draw = function() {
 
     if (this.isLabeled()) {
       if (this.isMine()) {
-        this.drawMarker(ctx);
+        this.drawMine(ctx);
       } else {
         this.drawFalseFlag(ctx);
       }

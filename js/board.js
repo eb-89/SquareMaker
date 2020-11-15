@@ -5,7 +5,7 @@ import { Canvases } from "./canvases.js"
 
 const Board = function(config, model) {
   
-  let _stateArray;
+  let _stateArray = model.getState();
 
   let width = config.vcfg.boardWidth;
 
@@ -22,15 +22,18 @@ const Board = function(config, model) {
       for (let c of _cells) {
         if (c === hoveredCell) { continue; }
 
-          if(model.isRunning()) {
-            c.draw();
-          } else {
-            c.draw();
-          }
+        if (model.gameIsWon() && c.isMine()) {
+          c.setColorscheme( {hidden:"green"} )
+        }
+        
+        c.draw()
 
       }
 
       if (hoveredCell) {
+        if (model.gameIsWon() && hoveredCell.isMine()) {
+          hoveredCell.setColorscheme( {hidden:"green"} )
+        }
         hoveredCell.draw();
       }
     },
@@ -70,9 +73,6 @@ const Board = function(config, model) {
         switch (evt.button) {
           case 0: 
             model.handleAction(hoveredCell.datax, hoveredCell.datay);
-            if (!model.isRunning()) {
-              model.reveal();
-            }
             break;
           case 2:
             model.mark(hoveredCell.datax, hoveredCell.datay);

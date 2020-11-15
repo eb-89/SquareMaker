@@ -21,11 +21,11 @@ Timer.prototype.draw = function() {
 
   ctx.fillStyle="white";
   ctx.strokeStyle="white";
+  ctx.lineWidth = 3;
   ctx.beginPath()
   ctx.moveTo(this.x + this.width/2, this.y);
   ctx.lineTo(this.x + this.width/2, this.y + this.height);
   ctx.closePath();
-  ctx.strokeWidth = 4;
   ctx.stroke()
 
 

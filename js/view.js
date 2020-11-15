@@ -64,14 +64,15 @@ const View = function(config, model) {
 
   let activeScreen = menuscreen;
 
-  model.setOnStateChange(function () {
-    activeScreen.render();
-  })
+  //model.setOnStateChange(function () {
+  //  activeScreen.render();
+  //})
 
 
   return {
     handleClick: function(evt) {
       activeScreen.handleClick(evt)
+      activeScreen.render();
     },
 
     handleMouseMove: function(evt) {

@@ -31,9 +31,10 @@ const Bar = function(config, model) {
   }
 
   let timer = new Timer((Canvases.getCanvas().width - 200)/2,10,200,35);
+
   let navigationHandler;
   
-  return {
+  const returnObj =  {
     draw() {
       ctx.fillStyle= "cyan";
       ctx.fillRect(0,0, cvsWidth, 50)
@@ -62,6 +63,12 @@ const Bar = function(config, model) {
     }
 
   }
+  
+  model.setOnTick( function() {
+    returnObj.draw();
+  })
+
+  return returnObj;
 
 }
 

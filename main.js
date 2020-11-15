@@ -33,7 +33,7 @@ function init() {
   // Model options, default
   let modelCfg = {
       dims: {x: 10, y: 10},
-      mines: 1
+      mines: 2
   }
 
   Canvases.setCanvas(cvs);
