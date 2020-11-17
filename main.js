@@ -32,8 +32,8 @@ function init() {
 
   // Model options, default
   let modelCfg = {
-      dims: {x: 10, y: 10},
-      mines: 2
+      dims: {x: 20, y: 15},
+      mines: 8
   }
 
   Canvases.setCanvas(cvs);

@@ -72,7 +72,9 @@ const Mswp = function() {
     gameIsWon: function () {
       return won;
     },
-
+    gameIsLost: function () {
+      return lost;
+    },
     handleAction: function(x,y) {
       handleFirstClick();
       if (this.isRunning()) {
@@ -83,6 +85,7 @@ const Mswp = function() {
         }
 
         if (cell.isMine()) {
+            lost = true;
             this.end();
         } else {
           _floodfill(_state, x,y);
@@ -132,7 +135,6 @@ const Mswp = function() {
 
     end: function () {
       _running = false;
-      lost = true;
       clearInterval(tick);
       this.reveal();
 
@@ -164,7 +166,7 @@ const Mswp = function() {
     reveal: function () {
       for (let row of _state) {
         for (let cell of row) { 
-          if (cell.isMine() || cell.isLabeled())
+          if (cell.isMine())
           cell.show();
         }
       }

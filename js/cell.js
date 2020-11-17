@@ -11,8 +11,11 @@ export const Cell = function(data, x,y, width,height) {
   this.datax = this._data.x;
   this.datay = this._data.y;
   this.colors = { hidden: "brown", shown: "magenta" }
-
-  // const draw = this.draw.bind(this);
+  this.backgroundColor = "red";
+  this.mark;
+  this.mine;
+  this.neighbors;
+  this.falseFlag;
 
   this.tl = gsap.timeline({paused: true});  
   this.tl.to(
@@ -39,19 +42,34 @@ Cell.prototype.contains = function(x,y) {
           && (this.y + this.height > y)
 };
 
-Cell.prototype.isHidden = function()  { return this._data.isHidden() };
-Cell.prototype.getNeighbors = function()  {return this._data.getNeighbors()};
-Cell.prototype.isLabeled = function() {return this._data.isLabeled()};
-Cell.prototype.isMine = function() {return this._data.isMine()};
+
+Cell.prototype.setMarker = function(bol) {
+  this.marker = bol;
+};
+
+Cell.prototype.setMine = function(bol) {
+  this.mine = bol;
+};
+
+Cell.prototype.setNeighbors = function(n) {
+  this.neighbors = n;
+};
+
+Cell.prototype.setFalseFlag = function(bol) {
+  this.falseFlag = bol;
+};
+
 Cell.prototype.setColorscheme = function(colors) {
   for (const c in colors) {
     this.colors[c] = colors[c];
   }
 };
 
-Cell.prototype.drawCell = function(ctx, auxCvs) {
 
-  let neighbors = this.getNeighbors();
+
+Cell.prototype.drawNeighbors = function(neighbors) {
+  const ctx = Canvases.getCanvas().getContext('2d');
+  const auxCvs = Canvases.getAuxCanvas();
   let blueshade = (255 - Math.round((255/8)*neighbors)).toString(16);
   if (blueshade.length == 1) {
     blueshade = "0"+blueshade;
@@ -61,7 +79,6 @@ Cell.prototype.drawCell = function(ctx, auxCvs) {
   if (neighbors > 0) {
    ctx.drawImage(auxCvs, neighbors*50, 0, 50, 50, this.x, this.y, this.width, this.height);
   }
-
 }
 
 Cell.prototype.drawFrame = function(ctx) {
@@ -82,10 +99,6 @@ Cell.prototype.drawFrame = function(ctx) {
   ctx.stroke();
 }
 
-Cell.prototype.setMarker = function(cfg) {
-
-};
-Cell.prototype.getColor = function(color) {return color};
 
 Cell.prototype.drawMarker = function(ctx) {
   
@@ -99,6 +112,7 @@ Cell.prototype.drawMarker = function(ctx) {
   ctx.moveTo(x + 3 ,y+h);
   ctx.lineTo(x + w - 3 , y+h)
   ctx.lineTo(x + w/2, y + h/5);
+  ctx.closePath();
   ctx.fill();
 
 }
@@ -129,36 +143,26 @@ Cell.prototype.drawMine = function(ctx) {
 Cell.prototype.draw = function() {
   // console.log("still drawing", this.colors.hidden);
   const ctx = Canvases.getCanvas().getContext('2d');
-  const auxCvs = Canvases.getAuxCanvas();
 
   ctx.clearRect(this.x - 1, this.y-1, this.width+2, this.height+2);
 
   this.drawFrame(ctx);
-  let neighbors;
+  ctx.fillStyle = this.backgroundColor;
+  ctx.fill()
 
-  if (this.isHidden()) {
-      ctx.fillStyle = this.colors.hidden;
-      ctx.fill();
-    if (this.isLabeled()) {
-      this.drawMarker(ctx);
-    }
-
-  } else {
-
-    if (this.isLabeled()) {
-      if (this.isMine()) {
-        this.drawMine(ctx);
-      } else {
-        this.drawFalseFlag(ctx);
-      }
-      
-    } else if(this.isMine()) {
-      this.drawMine(ctx);
-    } else {
-      this.drawCell(ctx, auxCvs);
-    }
+  if (this.marker) {
+    this.drawMarker(ctx);
   }
 
+  if (this.mine) {
+    this.drawMine(ctx);
+  }
+
+  if (this.falseFlag) {
+    this.drawFalseFlag(ctx);
+  }
+
+  this.drawNeighbors(this.neighbors);
 
 };
 

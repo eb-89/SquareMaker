@@ -20,21 +20,47 @@ const Board = function(config, model) {
 
     render: function() {
       for (let c of _cells) {
-        if (c === hoveredCell) { continue; }
+        // if (c === hoveredCell) { continue; }
 
-        if (model.gameIsWon() && c.isMine()) {
-          c.setColorscheme( {hidden:"green"} )
-        }
+        let cellData = _stateArray[c.datax][c.datay] 
         
-        c.draw()
+        if (cellData.isHidden()) {
+          c.backgroundColor = "lightgreen"
+          c.setMarker(cellData.isLabeled());
+        } else if (cellData.isMine()) {
+          c.setMine(cellData.isMine());
+        } else {
+          c.setNeighbors(cellData.getNeighbors());
+        }
+
+        if (model.gameIsWon() && cellData.isMine() && cellData.isLabeled()) {
+          c.backgroundColor = "yellow"
+          c.setMine(false);
+          c.setMarker(cellData.isLabeled());
+        }
+
+        if (model.gameIsLost())  {
+          if (cellData.isMine() && cellData.isLabeled()) {
+            c.backgroundColor = "darkgreen"
+            c.setMine(false);
+            c.setMarker(cellData.isLabeled());
+          }
+
+          if (!cellData.isMine() && cellData.isLabeled()) {
+            c.setMarker(false)
+            c.setFalseFlag(true);
+          }
+        }
+
+        c.draw();
 
       }
 
       if (hoveredCell) {
-        if (model.gameIsWon() && hoveredCell.isMine()) {
-          hoveredCell.setColorscheme( {hidden:"green"} )
-        }
-        hoveredCell.draw();
+        //if (model.gameIsWon() && hoveredCell.isMine()) {
+        //  hoveredCell.setColorscheme( {hidden:"green"} )
+        //}
+        //hoveredCell.draw();
       }
     },
     getModelData() {
