@@ -20,7 +20,6 @@ const Board = function(config, model) {
 
     render: function() {
       for (let c of _cells) {
-        // if (c === hoveredCell) { continue; }
 
         let cellData = _stateArray[c.datax][c.datay] 
         
@@ -54,13 +53,6 @@ const Board = function(config, model) {
 
         c.draw();
 
-      }
-
-      if (hoveredCell) {
-        //if (model.gameIsWon() && hoveredCell.isMine()) {
-        //  hoveredCell.setColorscheme( {hidden:"green"} )
-        //}
-        //hoveredCell.draw();
       }
     },
     getModelData() {
@@ -114,13 +106,21 @@ const Board = function(config, model) {
         if (cell.contains(mouseX, mouseY)) {
           hoveredCell = cell;
           if (cell._enterListener) {
-            cell.onMouseEnter();
-            cell._enterListener = false;
+
+            if (_stateArray[cell.datax][cell.datay].isHidden() && model.isRunning()) {
+              cell.onMouseEnter();
+              cell._enterListener = false;
+            }
           }
         } else {
           if (!cell._enterListener) {
-            cell.onMouseExit();
-            cell._enterListener = true;
+            if (_stateArray[cell.datax][cell.datay].isHidden() && model.isRunning()) {
+              cell.onMouseExit();
+              cell._enterListener = true;
+            } else if (cell.tl.progress()>0) {
+              cell.tl.reverse();
+            }
+
           }
         } 
       }

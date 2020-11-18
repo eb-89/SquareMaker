@@ -35,7 +35,6 @@ export const Cell = function(data, x,y, width,height) {
 }
 
 Cell.prototype.contains = function(x,y) {
-  // Implements Clickable
   return  this.x < x 
           && this.y < y 
           && (this.x + this.width > x)
