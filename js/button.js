@@ -40,7 +40,7 @@ BackButton.prototype = Object.create(Button.prototype)
 BackButton.prototype.draw = function(ctx,auxCvs) {
 
   let arrowWidth = 4; 
-  ctx.fillStyle = "magenta"
+  ctx.fillStyle = "darkcyan"
 
   ctx.fillRect(this.x, this.y, this.width, this.height);
   ctx.fill();
@@ -71,7 +71,7 @@ resetButton.prototype = Object.create(Button.prototype)
 resetButton.prototype.draw = function(ctx,auxCvs) {
 
   let arrowWidth = 3; 
-  ctx.fillStyle = "magenta"
+  ctx.fillStyle = "darkcyan"
 
   ctx.fillRect(this.x, this.y, this.width, this.height);
   // ctx.fill();

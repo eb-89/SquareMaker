@@ -75,8 +75,6 @@ const Board = function(config, model) {
 
           let c = new Cell(_stateArray[i][j], x, y, cellW, cellH);
 
-          // c.setColorscheme(config.vcfg.colorscheme);
-          // c.setMarker(config.vcfg.markertype);
           _cells.push(c)
         }
       }
@@ -87,7 +85,7 @@ const Board = function(config, model) {
       const rect = evt.target.getBoundingClientRect();
       const mouseX = evt.clientX - rect.x;
       const mouseY = evt.clientY - rect.y;
-      if (hoveredCell) {
+      if (hoveredCell && model.isRunning()) {
         switch (evt.button) {
           case 0: 
             model.handleAction(hoveredCell.datax, hoveredCell.datay);
