@@ -74,6 +74,7 @@ const View = function(config, model) {
   return {
     handleClick: function(evt) {
       activeScreen.handleClick(evt)
+      ctx.clearRect(0,0,Canvases.getCanvas().width, Canvases.getCanvas().height);
       activeScreen.render();
     },
 

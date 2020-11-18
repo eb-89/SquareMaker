@@ -47,11 +47,16 @@ const menu = function(config) {
       cfgBtn.draw();
 
       // Menu text
-      const ts = 30;
+      let ts = 30;
       ctx.font = `normal normal bold ${ts}px Courier`;
-      ctx.fontColor = `blue`;
-      const text = `Squares`;
+      ctx.fillStyle = `blue`;
+      let text = `Squares`;
       ctx.fillText(text, (cvsWidth)/2 - (ctx.measureText(text).width)/2, 100 + ts);
+
+      ts = 12;
+      ctx.font = `normal normal bold ${ts}px Courier`;
+      text = `A minesweeper implementation`;
+      ctx.fillText(text, (cvsWidth)/2 - (ctx.measureText(text).width)/2, 150 + ts);
 
     },
     handleClick: function(evt ) {
