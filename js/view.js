@@ -40,7 +40,9 @@ const View = function(config, model) {
         activeScreen.render();
       break;
       case 'home':
-        model.end();
+        if (model.isRunning()) {
+          model.end();
+        }
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         activeScreen = menuscreen;
         menuscreen.render();

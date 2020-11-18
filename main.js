@@ -55,23 +55,8 @@ function onMouseMove(evt) {
 }
 
 function onMouseClick(evt) {
-  
-  switch (evt.button) {
-    case 0: 
-      view.handleClick(evt, function (x, y) {
-        model.handleAction(x, y);
-      })
-      break;
-    case 2:
-      view.handleClick(evt, function (x, y) {
-        model.mark(x, y);
-      })
-      break;
-  }
+  view.handleClick(evt)
 }
-
-
-
 
 
 

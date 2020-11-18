@@ -8,33 +8,51 @@ const menu = function(config) {
   let auxCvs = Canvases.getAuxCanvas(); 
 
   const startBtn= {
-    x: 100,
+    x: (cvsWidth)/2 - 200/2,
     y: 200,
     width: 200,
-    height: 100
+    height: 100,
+    draw: function () {
+      ctx.fillStyle = "lightblue";
+      ctx.fillRect(this.x,this.y,this.width,this.height);
+      const ts = 15;
+      ctx.font = `normal normal bold ${ts}px Courier`;
+      ctx.fillStyle = "darkblue";
+      const text = `Start`;
+      ctx.fillText(text, this.x + (this.width - ctx.measureText(text).width)/2, this.y + this.height/2);
+    }
   }
-  const cfgBtn= {
-    x: 100,
+
+  const cfgBtn = {
+    x: (cvsWidth)/2 - 200/2,
     y: startBtn.y + startBtn.height + 10,
     width: 200,
-    height: 100
+    height: 100,
+    draw: function () {
+      ctx.fillStyle = "lightblue";
+      ctx.fillRect(this.x,this.y,this.width,this.height);
+      const ts = 15;
+      ctx.font = `normal normal bold ${ts}px Courier`;
+      const text = `Options`;
+      ctx.fillStyle = "darkblue";
+      ctx.fillText(text, this.x + (this.width - ctx.measureText(text).width)/2, this.y + this.height/2);
+    }
   }
   
   let navigationHandler;
 
   return {
     render: function() {
-      ctx.fillStyle = "lightblue";
+      startBtn.draw();
+      cfgBtn.draw();
 
-      ctx.fillRect(startBtn.x,startBtn.y,startBtn.width,startBtn.height);
-      // Now here we have a bunch of magic numbers...
-      // TODO: Change this!
-      ctx.fillRect(startBtn.x, startBtn.y, 100, 50);
-      ctx.drawImage(auxCvs, 0, 50, 100, 50, startBtn.x + (startBtn.width - 100)/2, startBtn.y, 100, 50);
-      ctx.drawImage(auxCvs, 0, 50, 100, 50, cfgBtn.x + (cfgBtn.width - 100)/2, cfgBtn.y, 100, 50);
+      // Menu text
+      const ts = 30;
+      ctx.font = `normal normal bold ${ts}px Courier`;
+      ctx.fontColor = `blue`;
+      const text = `Squares`;
+      ctx.fillText(text, (cvsWidth)/2 - (ctx.measureText(text).width)/2, 100 + ts);
 
-      // Title
-      ctx.drawImage(auxCvs, 0, 200, 150, 50, (cvsWidth-150)/2, 20, 150, 50);
     },
     handleClick: function(evt ) {
       const rect = evt.target.getBoundingClientRect();
