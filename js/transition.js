@@ -61,7 +61,7 @@ const Transition = function (ctx) {
           return target.targetHeight;
       },
       duration: function(index, target, targets) { //function-based value
-           return 0.4
+           return 0.3
       }
       }, "-=0.2")
 

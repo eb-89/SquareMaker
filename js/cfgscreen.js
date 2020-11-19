@@ -4,7 +4,7 @@ import { Canvases } from "./canvases.js"
 
 function RadioButtonSelector(cfg, opts, x, y) {
   this.cfg = cfg;
-  // console.log(cfg)
+  this.opts = opts;
   this.x = x;
   this.y = y;
   let buttons = [];
@@ -17,13 +17,13 @@ function RadioButtonSelector(cfg, opts, x, y) {
 
 
     btn.setOnClickHandler(function (idx) {
-      btn.color = "yellow";
+      btn.bordercolor = "red";
       for (const prop in opt) {
         this.cfg[prop] = opt[prop];
       }
       for (const btn of buttons) {
         if (btn.idx != idx) {
-          btn.color = "blue";
+          btn.bordercolor = "darkgray";
         }
       }
     }.bind(this))
@@ -95,9 +95,11 @@ const cfg = function(config) {
   ]
 
   let mopts = [
-    {x: 10, y: 10},
-    {x: 15, y: 15}
+    {dims: {x: 9, y: 9}, mines: 10},
+    {dims: {x: 16, y: 16}, mines: 40},
+    {dims: {x: 30, y: 16}, mines: 99},
   ]
+
 
   let markeropts = [
     { type: "flag", color: "lightgreen" },
@@ -107,9 +109,57 @@ const cfg = function(config) {
   let _mcfg = config.mcfg;
   let _vcfg = config.vcfg;
 
-  const selector_color = new RadioButtonSelector(_vcfg.colorscheme, vopts, 50, 50);
-  const selector_size = new RadioButtonSelector(_mcfg.dims, mopts, 50, 150);
-  const selector_minetype = new RadioButtonSelector(_vcfg.markertype, markeropts, 50, 250);
+  const selector_size = new RadioButtonSelector(_mcfg, mopts, cvsWidth/2, 220);
+  const selector_color = new RadioButtonSelector(_vcfg.colorscheme, vopts, cvsWidth/2, 300);
+
+  selector_size.draw = function(ctx) {
+    for (const [i, btn] of this.buttons.entries() ) {
+      btn.draw(ctx);
+      ctx.font = `normal normal bold 20px Courier`;
+      ctx.fillStyle = "black"
+      switch (i) {
+        case 0:
+          ctx.fillText("S", btn.x + btn.width/2 - ctx.measureText("S").width/2, btn.y + 20)
+          break;
+        case 1: 
+          ctx.fillText("M", btn.x + btn.width/2 - ctx.measureText("M").width/2, btn.y + 20)
+          break;
+        case 2: 
+          ctx.fillText("L", btn.x + btn.width/2 - ctx.measureText("M").width/2, btn.y + 20)
+          break;
+      }
+
+    }
+  }
+
+  selector_color.draw = function(ctx) {
+    for (const [i, btn] of this.buttons.entries() ) {
+      btn.draw(ctx);
+      let colors;
+      switch (i) {
+        case 0:
+          colors = ["red", "green", "blue", "black"];
+          break;
+        case 1: 
+          colors = ["cyan", "magenta", "yellow", "white"];
+          break;
+        case 2: 
+          colors = ["gray", "black", "darkgray", "white"];
+          break;
+      }
+      ctx.fillStyle = colors[0];
+      ctx.fillRect(btn.x + 5, btn.y + 5, btn.width/2 - 5, btn.height/2 - 5 )
+      
+      ctx.fillStyle = colors[1];
+      ctx.fillRect(btn.x + btn.width/2, btn.y +5 , btn.width/2 - 5, btn.height/2 -5)
+      
+      ctx.fillStyle = colors[2];
+      ctx.fillRect(btn.x + 5, btn.y + btn.height/2, btn.width/2 - 5, btn.height/2 -5)
+      
+      ctx.fillStyle = colors[3];
+      ctx.fillRect(btn.x + btn.width/2, btn.y + btn.height/2, btn.width/2 - 5, btn.height/2 -5)
+    }
+  }
 
   return {
     render: function() {
@@ -132,27 +182,23 @@ const cfg = function(config) {
 
       ctx.fillRect(Canvases.getCanvas().width/2 - 300, 200, 600, 280)
 
+      let menutextSize = 20
+      ctx.font =`normal normal bold ${menutextSize}px Courier`
+      
+      text = "Select size"
+      ctx.fillStyle ="darkblue"
+      ctx.fillText(text,  50 + 20 , 220 + 20 + menutextSize)
+
 
       text = "Select colors"
-      ctx.font ="normal normal bold 12px Courier"
       ctx.fillStyle ="darkblue"
       // 50 + 20  = selector.x + selector.pad
       // 50 + 12  = selector.y + fontsize
-      ctx.fillText(text, 50 + 20 , 50 + 12)
+      ctx.fillText(text,50 + 20 , 300 + 20 + menutextSize)
 
-      selector_color.draw(ctx);
-
-
-      text = "Select size"
-      ctx.fillStyle ="darkblue"
-      ctx.fillText(text, 50 + 20 , 150 + 12)
 
       selector_size.draw(ctx);
-
-      text = "Select minetype"
-      ctx.fillStyle ="darkblue"
-      ctx.fillText(text, 50 + 20 , 250 + 12)
-      selector_minetype.draw(ctx);
+      selector_color.draw(ctx);
       
       back.draw(ctx);
 
@@ -167,7 +213,6 @@ const cfg = function(config) {
       
       selector_color.handleClick(x,y);
       selector_size.handleClick(x,y);
-      selector_minetype.handleClick(x,y)
       
       this.render();
       if (

@@ -30,7 +30,7 @@ const Bar = function(config, model) {
     }
   }
 
-  let timer = new Timer((Canvases.getCanvas().width - 200)/2,10,200,35);
+  let timer = new Timer(Math.round((Canvases.getCanvas().width - 200)/2),10,200,35);
 
   let navigationHandler;
   

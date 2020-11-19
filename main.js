@@ -27,7 +27,6 @@ function init() {
   let viewCfg = {
     cellSize: 17,
     colorscheme: {hidden: "red", shown: "darkgray"},
-    markertype: { type: "flag", color: "green" },
   }
 
   // Model options, default

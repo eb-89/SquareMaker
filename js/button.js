@@ -8,6 +8,7 @@ export function Button(x,y,width,height, idx) {
   this.selected;
   this.idx = idx;
   this.color = "blue";
+  this.bordercolor = "darkgray"
 }
 
 Button.prototype.contains = function(x,y) {
@@ -24,7 +25,20 @@ Button.prototype.onClick = function() {
 
 Button.prototype.draw = function(ctx,auxCvs) {
   ctx.fillStyle = this.color;
-  ctx.fillRect(this.x, this.y, this.width, this.height);
+  ctx.strokeStyle = this.bordercolor;
+  ctx.lineWidth = "4";
+
+  const r = 5;
+
+  ctx.beginPath()
+  ctx.arc(this.x + r, this.y + r, r, Math.PI, 3/2*Math.PI);
+  ctx.arc(this.x + this.width - r, this.y + r, r, 3/2*Math.PI, 0);
+  ctx.arc(this.x + this.width - r, this.y + this.height - r, r, 0, 1/2*Math.PI);
+  ctx.arc(this.x + r, this.y + this.height - r, r, 1/2*Math.PI, Math.PI);
+  ctx.closePath()
+  ctx.stroke();
+
+  //ctx.fillRect(this.x, this.y, this.width, this.height);
 };
 
 Button.prototype.setOnClickHandler = function(handler) {
