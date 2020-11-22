@@ -14,7 +14,7 @@ const View = function(config, model) {
   let auxCvs = Canvases.getAuxCanvas();
 
   const prerender = Prerender(auxCvs);
-  const transition = Transition(ctx);
+  const transition = Transition();
 
   // navigation function
   const navigation = function (to) {
@@ -24,10 +24,11 @@ const View = function(config, model) {
         model.init(config.mcfg);
         mswpscreen.start();
 
+        transition.setActiveScreen(activeScreen)
         transition.onTransition(function () {
           activeScreen = mswpscreen;
-          ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-          activeScreen.render();
+          transition.setActiveScreen(mswpscreen)
+          //ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         });
         transition.startTransition();
       break;

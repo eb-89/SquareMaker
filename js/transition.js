@@ -1,6 +1,11 @@
+import { Canvases } from "./canvases.js"
 
-const Transition = function (ctx) {
+
+const Transition = function() {
   
+
+  const cvs = Canvases.getCanvas()
+  const ctx = cvs.getContext("2d")
   let boxes = [];
 
   let box = {
@@ -70,28 +75,33 @@ const Transition = function (ctx) {
   tl.call(() => {
     isRunning = false; 
     onTransition()
-  }, null, "+=0.5");
+
+  }, null, "+=0.1");
 
 
   tl.call(() => {
-    gsap.ticker.remove(render);
+    tl.reverse().then(() => {
+      gsap.ticker.remove(render);
+      ctx.clearRect(0,0, cvs.width, cvs.height)
+      activeSceen.render();
+    });
   })
 
+  let activeSceen;
+
   function render() {
-    console.log("render")
+      ctx.clearRect(0,0, cvs.width, cvs.height)
+      activeSceen.render();
       for (let box of boxes) {
           box.draw(ctx);
       }
   }
 
   return {
-    // render(ctx) {
 
-      // for (let box of boxes) {
-          // box.draw(ctx);
-      // }
-
-    // },
+    setActiveScreen(screen) {
+      activeSceen = screen;
+    },
 
     onTransition(cb) {
       onTransition = cb;
@@ -99,8 +109,6 @@ const Transition = function (ctx) {
 
     startTransition() {
       gsap.ticker.add(render);
-
-      tl.restart();
       tl.play();
       isRunning = true;
 
