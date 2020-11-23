@@ -40,17 +40,28 @@ const View = function(config, model) {
         activeScreen.render();
       break;
       case 'home':
-        if (model.isRunning()) {
-          model.end();
-        }
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        activeScreen = menuscreen;
-        menuscreen.render();
+
+        transition.setActiveScreen(activeScreen)
+        transition.onTransition(function () {
+          if (model.isRunning()) {
+            model.end();
+          }
+          activeScreen = menuscreen;
+          transition.setActiveScreen(menuscreen)
+        });
+
+        transition.startTransition();
       break;
       case 'config':
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        activeScreen = configscreen;
-        activeScreen.render();
+        transition.setActiveScreen(activeScreen)
+        transition.onTransition(function () {
+          activeScreen = configscreen;
+          transition.setActiveScreen(configscreen)
+        });
+
+        transition.startTransition();
         break;
     }
   }

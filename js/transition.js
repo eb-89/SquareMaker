@@ -27,7 +27,7 @@ const Transition = function() {
           targetHeight: 20,
 
           draw: function (ctx) {
-            ctx.fillStyle ="gray";
+            ctx.fillStyle ="darkblue";
             ctx.fillRect(b.x, b.y, b.width, b.height);
           }
         }
