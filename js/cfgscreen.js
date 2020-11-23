@@ -17,15 +17,16 @@ function RadioButtonSelector(cfg, opts, x, y) {
 
 
     btn.setOnClickHandler(function (idx) {
-      btn.bordercolor = "red";
+      // btn.bordercolor = "red";
       for (const prop in opt) {
         this.cfg[prop] = opt[prop];
       }
-      for (const btn of buttons) {
-        if (btn.idx != idx) {
-          btn.bordercolor = "darkgray";
-        }
-      }
+
+      //for (const btn of buttons) {
+      //  if (btn.idx != idx) {
+      //    btn.bordercolor = "darkgray";
+      //  }
+      //}
     }.bind(this))
     buttons.push(btn);
   }
@@ -89,9 +90,20 @@ const cfg = function(config) {
   let navigationHandler;
 
   let vopts = [
-    {shown: "red", hidden: "blue"},
-    {shown: "darkgreen", hidden: "lightgreen"},
-    {shown: "darkgray", hidden: "lightgray"},
+    {
+      barcolor: "red", 
+      hiddencolor: 160, //hsl value
+      showncolor: 0, //hsl value
+      markercolor: "blue",
+      wincolor: "yellow"
+    },
+    {
+      barcolor: "darkred", 
+      hiddencolor: 160, //hsl value
+      showncolor: 0, //hsl value
+      markercolor: "magenta",
+      wincolor: "darkyellow"
+    }
   ]
 
   let mopts = [
@@ -100,21 +112,34 @@ const cfg = function(config) {
     {dims: {x: 30, y: 16}, mines: 99},
   ]
 
-
-  let markeropts = [
-    { type: "flag", color: "lightgreen" },
-    {  type: "triangle", color: "brown" }
-  ]
+  // Defaults
+  for (let prop in mopts[0]) {
+      config.mcfg[prop] = mopts[0][prop];
+  }
+  
+  for (let prop in vopts[0]) { 
+    config.vcfg.colorscheme[prop] = vopts[0][prop];
+  }
 
   let _mcfg = config.mcfg;
   let _vcfg = config.vcfg;
 
-  const selector_size = new RadioButtonSelector(_mcfg, mopts, cvsWidth/2, 220);
+  // config.mcfg = mopts[1];
+
+  const selector_size = new RadioButtonSelector(config.mcfg, mopts, cvsWidth/2, 220);
   const selector_color = new RadioButtonSelector(_vcfg.colorscheme, vopts, cvsWidth/2, 300);
 
   selector_size.draw = function(ctx) {
     for (const [i, btn] of this.buttons.entries() ) {
       btn.draw(ctx);
+
+      // So crude
+      if (mopts[btn.idx].dims.x == this.cfg.dims.x) {
+        btn.bordercolor ="blue";
+      } else {
+        btn.bordercolor ="darkgray";
+      }
+
       ctx.font = `normal normal bold 20px Courier`;
       ctx.fillStyle = "black"
       switch (i) {
@@ -136,17 +161,16 @@ const cfg = function(config) {
     for (const [i, btn] of this.buttons.entries() ) {
       btn.draw(ctx);
       let colors;
-      switch (i) {
-        case 0:
-          colors = ["red", "green", "blue", "black"];
-          break;
-        case 1: 
-          colors = ["cyan", "magenta", "yellow", "white"];
-          break;
-        case 2: 
-          colors = ["gray", "black", "darkgray", "white"];
-          break;
+
+      // So crude
+      if (vopts[btn.idx].barcolor == this.cfg.barcolor) {
+        btn.bordercolor ="blue";
+      } else {
+        btn.bordercolor ="darkgray";
       }
+      let opts = vopts[btn.idx]
+      colors = [opts.barcolor, `hsl(${opts.hiddencolor}, 50%, 50%`, `hsl(${opts.showncolor}, 50%, 50%`, opts.markercolor];
+
       ctx.fillStyle = colors[0];
       ctx.fillRect(btn.x + 5, btn.y + 5, btn.width/2 - 5, btn.height/2 - 5 )
       

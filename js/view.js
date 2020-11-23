@@ -28,7 +28,6 @@ const View = function(config, model) {
         transition.onTransition(function () {
           activeScreen = mswpscreen;
           transition.setActiveScreen(mswpscreen)
-          //ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         });
         transition.startTransition();
       break;
@@ -56,20 +55,18 @@ const View = function(config, model) {
     }
   }
 
+  let configscreen = Cfgscreen(config);
+  configscreen.setNavigationHandler(navigation)
+
   let menuscreen = Menuscreen(config);
   menuscreen.setNavigationHandler(navigation)
 
   let mswpscreen = Mswpscreen(config, model);
   mswpscreen.setNavigationHandler(navigation)
 
-  let configscreen = Cfgscreen(config);
-  configscreen.setNavigationHandler(navigation)
+
 
   let activeScreen = menuscreen;
-
-  //model.setOnStateChange(function () {
-  //  activeScreen.render();
-  //})
 
 
   return {

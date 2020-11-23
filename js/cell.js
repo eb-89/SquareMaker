@@ -10,8 +10,8 @@ export const Cell = function(data, x,y, width,height) {
   this._enterListener = true;
   this.datax = this._data.x;
   this.datay = this._data.y;
-  this.colors = { hidden: "brown", shown: "magenta" }
-  this.backgroundColor = "red";
+  this.backgroundColor;
+  this.markercolor;
   this.mark;
   this.mine;
   this.neighbors;
@@ -69,11 +69,8 @@ Cell.prototype.setColorscheme = function(colors) {
 Cell.prototype.drawNeighbors = function(neighbors) {
   const ctx = Canvases.getCanvas().getContext('2d');
   const auxCvs = Canvases.getAuxCanvas();
-  let blueshade = (255 - Math.round((255/8)*neighbors)).toString(16);
-  if (blueshade.length == 1) {
-    blueshade = "0"+blueshade;
-  }
-  ctx.fillStyle = `#${blueshade}${blueshade}FF`;
+
+  ctx.fillStyle = this.backgroundColor;
   ctx.fill();
   if (neighbors > 0) {
    ctx.drawImage(auxCvs, neighbors*50, 0, 50, 50, this.x, this.y, this.width, this.height);
@@ -106,18 +103,35 @@ Cell.prototype.drawMarker = function(ctx) {
   let  w = this.width;
   let  h = this.height;
 
-  ctx.fillStyle = "red"
+
   ctx.beginPath();
   ctx.moveTo(x + 3 ,y+h);
   ctx.lineTo(x + w - 3 , y+h)
   ctx.lineTo(x + w/2, y + h/5);
   ctx.closePath();
+  ctx.fillStyle = this.markercolor;
   ctx.fill();
 
 }
 
 Cell.prototype.drawFalseFlag = function(ctx) {
-  ctx.fillStyle = "pink"
+  let  x = this.x;
+  let  y = this.y;
+  let  w = this.width;
+  let  h = this.height;
+  
+  ctx.beginPath();
+  ctx.moveTo(x + 3 ,y + 3);
+  ctx.lineTo(x + w - 3 , y+h-3)
+  ctx.moveTo(x + w - 3 ,y + 3);
+  ctx.lineTo(x + 3, y + h - 3);
+  ctx.closePath();
+
+  ctx.strokeStyle ="black";
+  ctx.stroke();
+
+
+  ctx.fillStyle = this.backgroundColor;
   ctx.fill();
 
 }
@@ -161,7 +175,9 @@ Cell.prototype.draw = function() {
     this.drawFalseFlag(ctx);
   }
 
-  this.drawNeighbors(this.neighbors);
+  if (this.neighbors) {
+    this.drawNeighbors(this.neighbors);
+  }
 
 };
 

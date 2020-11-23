@@ -23,21 +23,18 @@ function init() {
   auxCvs.setAttribute("width", 1000);
   auxCvs.setAttribute("height", 1000);
 
-  // View options, default
-  let viewCfg = {
-    cellSize: 17,
-    colorscheme: {hidden: "red", shown: "darkgray"},
-  }
-
-  // Model options, default
-  let modelCfg = {
-      dims: {x: 20, y: 15},
-      mines: 8
-  }
 
   Canvases.setCanvas(cvs);
   Canvases.setAuxCanvas(auxCvs);
 
+  let viewCfg = {
+    cellSize: 17,
+    colorscheme: {}
+  }
+
+  let modelCfg = {}
+
+  // Defaults are set in config screen code.
   let config = {
     vcfg: viewCfg,
     mcfg: modelCfg

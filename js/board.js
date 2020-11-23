@@ -1,5 +1,4 @@
 import {Cell} from "./Cell.js"
-// import Animator from "./animator.js"
 import { Canvases } from "./canvases.js"
 
 
@@ -24,28 +23,31 @@ const Board = function(config, model) {
         let cellData = _stateArray[c.datax][c.datay] 
         
         if (cellData.isHidden()) {
-          c.backgroundColor = "lightgreen"
+          c.backgroundColor = `hsl(${config.vcfg.colorscheme.hiddencolor}, 50%, 50%)`
           c.setMarker(cellData.isLabeled());
         } else if (cellData.isMine()) {
           c.setMine(cellData.isMine());
         } else {
-          c.setNeighbors(cellData.getNeighbors());
+          let n = cellData.getNeighbors()
+          c.setNeighbors(n);
+          c.backgroundColor = `hsl(${config.vcfg.colorscheme.showncolor}, ${(n/8)*100}%, ${100 -(n/8)*100}%)`
         }
 
         if (model.gameIsWon() && cellData.isMine() && cellData.isLabeled()) {
-          c.backgroundColor = "yellow"
+          c.backgroundColor = config.vcfg.colorscheme.wincolor;
           c.setMine(false);
           c.setMarker(cellData.isLabeled());
         }
 
         if (model.gameIsLost())  {
           if (cellData.isMine() && cellData.isLabeled()) {
-            c.backgroundColor = "darkgreen"
+            c.backgroundColor = `hsl(${config.vcfg.colorscheme.hiddencolor}, 50%, 35%)`
             c.setMine(false);
             c.setMarker(cellData.isLabeled());
           }
 
           if (!cellData.isMine() && cellData.isLabeled()) {
+            c.backgroundColor = `hsl(${config.vcfg.colorscheme.hiddencolor}, 50%, 35%)`
             c.setMarker(false)
             c.setFalseFlag(true);
           }
@@ -74,7 +76,7 @@ const Board = function(config, model) {
           let y = by + j*(cellH +pad);
 
           let c = new Cell(_stateArray[i][j], x, y, cellW, cellH);
-
+          c.markercolor = config.vcfg.colorscheme.markercolor;
           _cells.push(c)
         }
       }

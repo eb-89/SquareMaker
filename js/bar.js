@@ -11,8 +11,11 @@ const Bar = function(config, model) {
   const cvsWidth = Canvases.getCanvas().width;
 
   let back = new BackButton(10,10, 30, 30)
+  back.color = config.vcfg.colorscheme.barcolor;
   let restart = new resetButton(50,10, 30, 30)
+  restart.color = config.vcfg.colorscheme.barcolor;
   let mine =  new Mine(Canvases.getCanvas().width - 70, 10, 30, 30,)
+  
   let minesLeft = {
     x: Canvases.getCanvas().width - 40,
     y: 10,
@@ -36,7 +39,7 @@ const Bar = function(config, model) {
   
   const returnObj =  {
     draw() {
-      ctx.fillStyle= "cyan";
+      ctx.fillStyle = config.vcfg.colorscheme.barcolor;
       ctx.fillRect(0,0, cvsWidth, 50)
       timer.setSeconds(model.getSeconds());
       timer.setMinutes(model.getMinutes());

@@ -38,7 +38,6 @@ Button.prototype.draw = function(ctx,auxCvs) {
   ctx.closePath()
   ctx.stroke();
 
-  //ctx.fillRect(this.x, this.y, this.width, this.height);
 };
 
 Button.prototype.setOnClickHandler = function(handler) {
@@ -54,12 +53,12 @@ BackButton.prototype = Object.create(Button.prototype)
 BackButton.prototype.draw = function(ctx,auxCvs) {
 
   let arrowWidth = 4; 
-  ctx.fillStyle = "darkcyan"
+  ctx.fillStyle = "white";
 
   ctx.fillRect(this.x, this.y, this.width, this.height);
   ctx.fill();
   // ctx.beginPath();
-  ctx.strokeStyle = "cyan"
+  ctx.strokeStyle = this.color
   ctx.beginPath();
   ctx.moveTo(this.x + 5, this.y + (this.height)/2)
   ctx.lineTo(this.x + this.width -5, this.y + (this.height)/2)
@@ -71,7 +70,7 @@ BackButton.prototype.draw = function(ctx,auxCvs) {
   ctx.moveTo(this.x + 3, this.y + (this.height)/2)
   ctx.lineTo(this.x + 9, this.y + (this.height)/2 - 8)
   ctx.lineTo(this.x + 9, this.y + (this.height)/2 + 8)
-  ctx.fillStyle = "cyan";
+  ctx.fillStyle = this.color;
   ctx.fill();
 
 } 
@@ -85,19 +84,19 @@ resetButton.prototype = Object.create(Button.prototype)
 resetButton.prototype.draw = function(ctx,auxCvs) {
 
   let arrowWidth = 3; 
-  ctx.fillStyle = "darkcyan"
+  ctx.fillStyle = "white"
 
   ctx.fillRect(this.x, this.y, this.width, this.height);
   // ctx.fill();
   // ctx.beginPath();
-  ctx.strokeStyle = "cyan"
+  ctx.strokeStyle = this.color
   ctx.lineWidth = arrowWidth;
   ctx.beginPath();
   ctx.arc(this.x + this.width/2, this.y + this.height/2, 8, 0, Math.PI*2*(7/8))
   ctx.stroke();
 
   ctx.beginPath();
-  ctx.strokeStyle = "cyan"
+  ctx.strokeStyle = this.color
   ctx.moveTo(this.x + this.width - 5, this.y + (this.height)/2 + 1);
   ctx.lineTo(this.x + this.width - 5 - 4, this.y + (this.height)/2 + 1);
   ctx.lineTo(this.x + this.width - 5-2, this.y + (this.height)/2- 2);
